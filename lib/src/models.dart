@@ -1,3 +1,6 @@
+
+enum SuggestionPosition { top, bottom, none }
+
 class HashTag {
   String? hashtag;
   int? counts;

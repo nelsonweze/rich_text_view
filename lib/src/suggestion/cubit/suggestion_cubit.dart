@@ -4,7 +4,6 @@ import 'package:rich_text_view/src/models.dart';
 
 part 'suggestion_state.dart';
 
-enum SuggestionPosition { top, bottom, none }
 
 class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
   SuggestionCubit() : super(SuggestionState<T>());
