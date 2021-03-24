@@ -1,14 +1,18 @@
 # rich_text_view
 
-A new Flutter package project.
+A simple yet powerful rich text view that supports mention, hashtag, emial, url and see more.
 
-## Getting Started
-
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+## Example
+Container(
+            width: 300,
+            child: RichTextView(
+              text:
+                  "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send an email to janedoe@gmail.comto verify the facts talkmore of visiting www.janedoe.com",
+              maxLines: 3,
+              align: TextAlign.center,
+              onEmailClicked: (email) => print('$email clicked'),
+              onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
+              onMentionClicked: (mention) => print('$mention clicked'),
+              onUrlClicked: (url) => print('visting $url?'),
+            ),
+          )
