@@ -1,4 +1,3 @@
-
 enum SuggestionPosition { top, bottom, none }
 
 class HashTag {
@@ -18,24 +17,19 @@ class Suggestion {
   final String title;
   final String subtitle;
   final String imageURL;
-  final Function() onClick;
   final Map<String, dynamic>? parameters;
   Suggestion(
       {required this.imageURL,
-      required this.onClick,
       required this.subtitle,
       required this.title,
       this.parameters});
 
-  Suggestion.fromMap(Map<String, dynamic> map, final Function() onClick,
-      {Map<String, dynamic>? params})
+  Suggestion.fromMap(Map<String, dynamic> map, {Map<String, dynamic>? params})
       : title = map["title"],
         subtitle = map["subtitle"],
         imageURL = map["imageURL"],
-        onClick = onClick,
         parameters = params;
 }
-
 
 enum ParsedType { EMAIL, PHONE, URL, HASH, MENTION, BOLD, CUSTOM }
 

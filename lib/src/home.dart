@@ -25,13 +25,13 @@ class RichTextView extends StatefulWidget {
   final TextInputType? keyboardType;
   final FocusNode? focusNode;
   final bool readOnly;
-  final SuggestionPosition suggestionPosition;
+  final SuggestionPosition? suggestionPosition;
   final void Function(String)? onHashTagClicked;
   final void Function(String)? onMentionClicked;
   final void Function(String)? onEmailClicked;
   final void Function(String)? onUrlClicked;
   final Future<List<HashTag>?> Function(String)? onSearchTags;
-  final Future<List<Suggestion>?> Function(String)? onSearchPeople;
+  final Future<List<Suggestion?>?> Function(String)? onSearchPeople;
 
   RichTextView(
       {this.text,
@@ -159,7 +159,7 @@ class _RichTextViewState extends State<RichTextView> {
                           textCapitalization: TextCapitalization.sentences,
                           readOnly: widget.readOnly,
                           onChanged: (val) async {
-                            widget.onChanged!(val);
+                            widget.onChanged?.call(val);
                             cubit.last =
                                 controller!.text.split(' ').last.toLowerCase();
                             if (provider.last!.startsWith('@') ||

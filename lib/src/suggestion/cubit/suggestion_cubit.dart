@@ -8,7 +8,7 @@ part 'suggestion_state.dart';
 class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
   SuggestionCubit() : super(SuggestionState<T>());
 
-  set suggestions(List<T> value) {
+  set suggestions(List<T?> value) {
     emit(state.copyWith(suggestions: value));
   }
 
@@ -43,7 +43,7 @@ class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
     return controller;
   }
 
-  clear({List<HashTag>? hash, List<T>? people, bool load = false}) {
+  clear({List<HashTag>? hash, List<T?>? people, bool load = false}) {
     loading = load;
     suggestions = people ?? [];
     hashtags = hash ?? [];

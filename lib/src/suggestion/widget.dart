@@ -63,6 +63,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                               itemCount: provider.suggestions.length,
                               itemBuilder: (context, index) {
                                 var user = provider.suggestions[index];
+                                if (user == null) return Container();
                                 return widget.suggestionCard?.call(user) ??
                                     ListUserItem(
                                       title: user.title,

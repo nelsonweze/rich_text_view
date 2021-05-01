@@ -2,7 +2,7 @@ part of 'suggestion_cubit.dart';
 
 class SuggestionState<T> {
   final List<HashTag> hashtags;
-  final List<T> suggestions;
+  final List<T?> suggestions;
   final String? last;
   final double suggestionHeight;
   final bool loading;
@@ -16,7 +16,7 @@ class SuggestionState<T> {
 
   SuggestionState<T> copyWith(
       {final List<HashTag>? hashtags,
-      final List<T>? suggestions,
+      final List<T?>? suggestions,
       final String? last,
       final double? suggestionHeight,
       final bool? loading}) {
