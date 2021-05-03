@@ -100,6 +100,7 @@ class _RichTextViewState extends State<RichTextView> {
                   });
                 },
                 readMore: readMore,
+                selectable: selectable,
                 parse: [
                   MatchText(
                     type: ParsedType.HASH,
