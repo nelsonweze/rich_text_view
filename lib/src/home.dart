@@ -11,6 +11,7 @@ class RichTextView extends StatefulWidget {
   final int? maxLines;
   final TextAlign? align;
   final TextStyle? style;
+  final TextStyle? linkStyle;
   final bool showMoreText;
   final double? fontSize;
   final bool selectable;
@@ -38,6 +39,7 @@ class RichTextView extends StatefulWidget {
       this.maxLines,
       this.align,
       this.style,
+      this.linkStyle,
       this.showMoreText = true,
       this.selectable = true,
       this.controller,
@@ -89,6 +91,9 @@ class _RichTextViewState extends State<RichTextView> {
             .bodyText2!
             .copyWith(fontSize: widget.fontSize);
 
+    var linkStyle = widget.linkStyle ??
+        _style?.copyWith(color: Theme.of(context).accentColor);
+
     return !widget.editable
         ? Container(
             child: ParsedText(
@@ -103,31 +108,27 @@ class _RichTextViewState extends State<RichTextView> {
                 parse: [
                   MatchText(
                     type: ParsedType.HASH,
-                    style:
-                        _style?.copyWith(color: Theme.of(context).accentColor),
+                    style: linkStyle,
                     onTap: widget.onHashTagClicked,
                   ),
                   MatchText(
                     type: ParsedType.BOLD,
-                    style: _style?.copyWith(fontWeight: FontWeight.bold),
+                    style: linkStyle?.copyWith(fontWeight: FontWeight.bold),
                     onTap: (txt) {},
                   ),
                   MatchText(
                     type: ParsedType.MENTION,
-                    style:
-                        _style?.copyWith(color: Theme.of(context).accentColor),
+                    style: linkStyle,
                     onTap: widget.onMentionClicked,
                   ),
                   MatchText(
                     type: ParsedType.EMAIL,
-                    style:
-                        _style?.copyWith(color: Theme.of(context).accentColor),
+                    style: linkStyle,
                     onTap: widget.onEmailClicked,
                   ),
                   MatchText(
                     type: ParsedType.URL,
-                    style:
-                        _style?.copyWith(color: Theme.of(context).accentColor),
+                    style: linkStyle,
                     onTap: widget.onUrlClicked,
                   ),
                 ],
@@ -162,7 +163,8 @@ class _RichTextViewState extends State<RichTextView> {
                             widget.onChanged?.call(val);
                             cubit.last =
                                 controller!.text.split(' ').last.toLowerCase();
-                            if (provider.last!.startsWith('@') ||
+                            if (provider.last != null &&
+                                    provider.last!.startsWith('@') ||
                                 provider.last!.startsWith('#')) {
                               cubit.clear(
                                 load: true,
