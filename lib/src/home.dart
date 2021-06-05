@@ -67,11 +67,11 @@ class RichTextView extends StatefulWidget {
 }
 
 class _RichTextViewState extends State<RichTextView> {
-  int? _maxLines;
+  late int _maxLines;
   TextStyle? _style;
   bool flag = true;
   bool readMore = true;
-  TextEditingController? controller;
+  late TextEditingController controller;
 
   @override
   void initState() {
@@ -98,6 +98,7 @@ class _RichTextViewState extends State<RichTextView> {
         ? Container(
             child: ParsedText(
                 text: widget.text!.trim(),
+                linkStyle: linkStyle,
                 onMore: () {
                   setState(() {
                     _maxLines = 1000;
@@ -133,7 +134,7 @@ class _RichTextViewState extends State<RichTextView> {
                     onTap: widget.onUrlClicked,
                   ),
                 ],
-                maxLines: _maxLines,
+                maxLines: readMore ? _maxLines : null,
                 style: _style))
         : Padding(
             padding: const EdgeInsets.only(top: 16.0),
@@ -163,10 +164,10 @@ class _RichTextViewState extends State<RichTextView> {
                           onChanged: (val) async {
                             widget.onChanged?.call(val);
                             cubit.last =
-                                controller!.text.split(' ').last.toLowerCase();
+                                controller.text.split(' ').last.toLowerCase();
                             if (provider.last != null &&
-                                    provider.last!.startsWith('@') ||
-                                provider.last!.startsWith('#')) {
+                                (provider.last!.startsWith('@') ||
+                                    provider.last!.startsWith('#'))) {
                               cubit.clear(
                                 load: true,
                               );

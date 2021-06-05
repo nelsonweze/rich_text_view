@@ -24,6 +24,8 @@ class ParsedText extends StatelessWidget {
   /// It takes a [TextStyle] object as it's property to style all the non links text objects.
   final TextStyle? style;
 
+  final TextStyle? linkStyle;
+
   /// Takes a list of [MatchText] object.
   ///
   /// This list is used to find patterns in the String and assign onTap [Function] when its
@@ -92,6 +94,7 @@ class ParsedText extends StatelessWidget {
     required this.text,
     this.parse = const <MatchText>[],
     this.style,
+    this.linkStyle,
     this.alignment = TextAlign.start,
     this.textDirection,
     this.softWrap = true,
@@ -112,9 +115,7 @@ class ParsedText extends StatelessWidget {
     // Seperate each word and create a new Array
     TextSpan link = TextSpan(
         text: "...more",
-        style: style!.copyWith(
-          color: Theme.of(context).accentColor,
-        ),
+        style: linkStyle,
         recognizer: TapGestureRecognizer()..onTap = onMore as void Function()?);
 
     List<InlineSpan> widgets(String newString) {
@@ -331,7 +332,6 @@ class ParsedText extends StatelessWidget {
         endIndex = textPainter.getOffsetBefore(pos.offset);
         var textSpan;
         if (textPainter.didExceedMaxLines) {
-          print(endIndex);
           textSpan = TextSpan(
             children: [
               readMore
