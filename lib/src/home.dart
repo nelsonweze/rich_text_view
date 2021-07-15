@@ -107,6 +107,14 @@ class _RichTextViewState extends State<RichTextView> {
                 },
                 readMore: readMore,
                 selectable: widget.selectable,
+                supportedTypes: const [
+                  ParsedType.BOLD,
+                  ParsedType.CUSTOM,
+                  ParsedType.EMAIL,
+                  ParsedType.MENTION,
+                  ParsedType.PHONE,
+                  ParsedType.URL
+                ],
                 parse: [
                   MatchText(
                     type: ParsedType.HASH,

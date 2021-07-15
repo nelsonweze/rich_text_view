@@ -83,6 +83,7 @@ class ParsedText extends StatelessWidget {
   final GestureTapCallback? onTap;
   final Function? onMore;
   final bool readMore;
+  final List<ParsedType> supportedTypes;
 
   /// Creates a parsedText widget
   ///
@@ -93,6 +94,7 @@ class ParsedText extends StatelessWidget {
     Key? key,
     required this.text,
     this.parse = const <MatchText>[],
+    required this.supportedTypes,
     this.style,
     this.linkStyle,
     this.alignment = TextAlign.start,
@@ -176,7 +178,8 @@ class ParsedText extends StatelessWidget {
 
         // loop over to find patterns
         for (final e in parse) {
-          if (e.type == ParsedType.CUSTOM) {
+          if (e.type == ParsedType.CUSTOM &&
+              supportedTypes.contains(ParsedType.CUSTOM)) {
             RegExp customRegExp = RegExp(e.pattern!,
                 multiLine: e.regexOptions.multiLine,
                 caseSensitive: e.regexOptions.caseSensitive,
@@ -206,7 +209,8 @@ class ParsedText extends StatelessWidget {
               }
               break;
             }
-          } else if (e.type == ParsedType.EMAIL) {
+          } else if (e.type == ParsedType.EMAIL &&
+              supportedTypes.contains(ParsedType.EMAIL)) {
             RegExp emailRegExp = RegExp(emailPattern);
             bool matched = emailRegExp.hasMatch(element);
 
@@ -219,7 +223,8 @@ class ParsedText extends StatelessWidget {
               );
               break;
             }
-          } else if (e.type == ParsedType.PHONE) {
+          } else if (e.type == ParsedType.PHONE &&
+              supportedTypes.contains(ParsedType.PHONE)) {
             RegExp phoneRegExp = RegExp(phonePattern);
 
             bool matched = phoneRegExp.hasMatch(element);
@@ -233,7 +238,8 @@ class ParsedText extends StatelessWidget {
               );
               break;
             }
-          } else if (e.type == ParsedType.URL) {
+          } else if (e.type == ParsedType.URL &&
+              supportedTypes.contains(ParsedType.URL)) {
             RegExp urlRegExp = RegExp(urlPattern);
 
             bool matched = urlRegExp.hasMatch(element);
@@ -247,7 +253,8 @@ class ParsedText extends StatelessWidget {
               );
               break;
             }
-          } else if (e.type == ParsedType.HASH) {
+          } else if (e.type == ParsedType.HASH &&
+              supportedTypes.contains(ParsedType.HASH)) {
             RegExp hashRegExp = RegExp(hashPattern);
 
             bool matched = hashRegExp.hasMatch(element);
@@ -268,7 +275,8 @@ class ParsedText extends StatelessWidget {
               );
               break;
             }
-          } else if (e.type == ParsedType.MENTION) {
+          } else if (e.type == ParsedType.MENTION &&
+              supportedTypes.contains(ParsedType.MENTION)) {
             RegExp mentionRegExp = RegExp(mentionPattern);
             bool matched = mentionRegExp.hasMatch(element);
 
@@ -281,7 +289,8 @@ class ParsedText extends StatelessWidget {
               );
               break;
             }
-          } else if (e.type == ParsedType.BOLD) {
+          } else if (e.type == ParsedType.BOLD &&
+              supportedTypes.contains(ParsedType.BOLD)) {
             RegExp starRegExp = RegExp(starPattern);
             bool matched = starRegExp.hasMatch(element) ||
                 RegExp(boldPattern).hasMatch(element);
@@ -317,6 +326,7 @@ class ParsedText extends StatelessWidget {
           maxLines: maxLines,
           ellipsis: ' ...',
         );
+
         textPainter.layout(minWidth: constraints.minWidth, maxWidth: maxWidth);
         final linkSize = textPainter.size;
         // Layout and measure text
