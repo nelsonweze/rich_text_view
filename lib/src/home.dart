@@ -33,10 +33,11 @@ class RichTextView extends StatefulWidget {
   final void Function(String)? onUrlClicked;
   final Future<List<HashTag>?> Function(String)? onSearchTags;
   final Future<List<Suggestion?>?> Function(String)? onSearchPeople;
-
+  final List<ParsedType>? supportedTypes;
   RichTextView(
       {this.text,
       this.maxLines,
+      this.supportedTypes,
       this.align,
       this.style,
       this.linkStyle,
@@ -107,14 +108,15 @@ class _RichTextViewState extends State<RichTextView> {
                 },
                 readMore: readMore,
                 selectable: widget.selectable,
-                supportedTypes: const [
-                  ParsedType.BOLD,
-                  ParsedType.CUSTOM,
-                  ParsedType.EMAIL,
-                  ParsedType.MENTION,
-                  ParsedType.PHONE,
-                  ParsedType.URL
-                ],
+                supportedTypes: widget.supportedTypes ??
+                    const [
+                      ParsedType.BOLD,
+                      ParsedType.CUSTOM,
+                      ParsedType.EMAIL,
+                      ParsedType.MENTION,
+                      ParsedType.PHONE,
+                      ParsedType.URL
+                    ],
                 parse: [
                   MatchText(
                     type: ParsedType.HASH,
