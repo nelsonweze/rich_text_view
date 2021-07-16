@@ -1,7 +1,6 @@
 name: rich_text_view
 description: A simple yet powerful rich text view that supports mention, hashtag, emial, url and see more.
 version: 0.0.1
-author: nestuge.com
 homepage: https://github.com/nelstein/rich_text_view
 
 environment:
