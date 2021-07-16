@@ -64,14 +64,14 @@ class RichTextView extends StatefulWidget {
       this.onSearchPeople});
 
   @override
-  _RichTextViewState createState() => new _RichTextViewState();
+  _RichTextViewState createState() => _RichTextViewState();
 }
 
 class _RichTextViewState extends State<RichTextView> {
   late int _maxLines;
   TextStyle? _style;
   bool flag = true;
-  bool readMore = true;
+  bool expanded = false;
   late TextEditingController controller;
 
   @override
@@ -102,11 +102,10 @@ class _RichTextViewState extends State<RichTextView> {
                 linkStyle: linkStyle,
                 onMore: () {
                   setState(() {
-                    _maxLines = 1000;
-                    readMore = false;
+                    expanded = true;
                   });
                 },
-                readMore: readMore,
+                expanded: expanded,
                 selectable: widget.selectable,
                 supportedTypes: widget.supportedTypes ??
                     const [
@@ -144,7 +143,7 @@ class _RichTextViewState extends State<RichTextView> {
                     onTap: widget.onUrlClicked,
                   ),
                 ],
-                maxLines: readMore ? _maxLines : null,
+                maxLines: _maxLines,
                 style: _style))
         : Padding(
             padding: const EdgeInsets.only(top: 16.0),

@@ -10,7 +10,7 @@ class HashTag {
   HashTag.fromMap(Map map)
       : hashtag = map['hashtag'],
         counts = map['count'],
-        trending = map["trending"] ?? false;
+        trending = map['trending'] ?? false;
 }
 
 class Suggestion {
@@ -25,9 +25,9 @@ class Suggestion {
       this.parameters});
 
   Suggestion.fromMap(Map<String, dynamic> map, {Map<String, dynamic>? params})
-      : title = map["title"],
-        subtitle = map["subtitle"],
-        imageURL = map["imageURL"],
+      : title = map['title'],
+        subtitle = map['subtitle'],
+        imageURL = map['imageURL'],
         parameters = params;
 }
 

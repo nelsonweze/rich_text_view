@@ -4,7 +4,6 @@ import 'package:rich_text_view/src/models.dart';
 
 part 'suggestion_state.dart';
 
-
 class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
   SuggestionCubit() : super(SuggestionState<T>());
 
@@ -34,8 +33,7 @@ class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
     splits.last = item;
     controller.value = TextEditingValue(
         text: splits.join(' '),
-        selection:
-            new TextSelection.collapsed(offset: splits.join(' ').length));
+        selection: TextSelection.collapsed(offset: splits.join(' ').length));
 
     suggestionHeight = 1;
     hashtags = [];
@@ -43,7 +41,7 @@ class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
     return controller;
   }
 
-  clear({List<HashTag>? hash, List<T?>? people, bool load = false}) {
+  void clear({List<HashTag>? hash, List<T?>? people, bool load = false}) {
     loading = load;
     suggestions = people ?? [];
     hashtags = hash ?? [];

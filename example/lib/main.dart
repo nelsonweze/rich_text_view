@@ -17,19 +17,59 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Flutter Rich Text View'),
         ),
-        body: Center(
-          child: Container(
-            width: 300,
-            child: RichTextView(
-              text:
-                  "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send an email to janedoe@gmail.comto verify the facts talkmore of visiting www.janedoe.com",
-              maxLines: 3,
-              align: TextAlign.center,
-              onEmailClicked: (email) => print('$email clicked'),
-              onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
-              onMentionClicked: (mention) => print('$mention clicked'),
-              onUrlClicked: (url) => print('visting $url?'),
-            ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text('As a Text View Widget'),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                width: 300,
+                child: RichTextView(
+                  text:
+                      "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send an email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
+                  maxLines: 3,
+                  align: TextAlign.center,
+                  onEmailClicked: (email) => print('$email clicked'),
+                  onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
+                  onMentionClicked: (mention) => print('$mention clicked'),
+                  onUrlClicked: (url) => print('visting $url?'),
+                  supportedTypes: [
+                    ParsedType.EMAIL,
+                    ParsedType.HASH,
+                    ParsedType.MENTION
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              Text('As a Text Editor Widget'),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                width: 300,
+                child: RichTextView(
+                  editable: true,
+                  suggestionPosition: SuggestionPosition.bottom,
+                  onSearchPeople: (term) async {
+                    return [
+                      Suggestion(
+                          imageURL: 'imageURL',
+                          subtitle: 'I am the little guy from Coal city',
+                          title: 'Nelly Gane')
+                    ];
+                  },
+                  onSearchTags: (term) async {
+                    return [
+                      HashTag(hashtag: 'Dart', counts: 29, trending: true)
+                    ];
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),

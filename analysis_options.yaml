@@ -1,0 +1,6 @@
+include: package:pedantic/analysis_options.1.11.0.yaml
+
+
+analyzer:
+  exclude:
+    - flutter/** # Do not analyze the Flutter repository in the CI environment
