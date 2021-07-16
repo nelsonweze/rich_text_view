@@ -21,6 +21,7 @@ class SuggestionWidget extends StatefulWidget {
 }
 
 class _SuggestionWidgetState extends State<SuggestionWidget> {
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<SuggestionCubit<Suggestion>,
             SuggestionState<Suggestion>>(
@@ -137,6 +138,7 @@ class ListUserItem extends StatelessWidget {
           ),
           Flexible(
               child: Container(
+            margin: EdgeInsets.only(left: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -171,7 +173,6 @@ class ListUserItem extends StatelessWidget {
                 )
               ],
             ),
-            margin: EdgeInsets.only(left: 20.0),
           )),
         ]),
       ),
