@@ -39,8 +39,8 @@ class ParsedText extends StatelessWidget {
   final TextWidthBasis textWidthBasis;
   final bool selectable;
   final GestureTapCallback? onTap;
-  final Function? onMore;
-  final bool expanded;
+  final Function()? onMore;
+  final ValueNotifier<bool> expanded;
   final String moreText;
   final List<ParsedType> supportedTypes;
   final RegexOptions regexOptions;
@@ -63,27 +63,26 @@ class ParsedText extends StatelessWidget {
     this.maxLines,
     this.onTap,
     this.onMore,
-    this.expanded = false,
+    required this.expanded,
     this.moreText = 'more',
     this.selectable = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var link = expanded
+    var link = expanded.value
         ? TextSpan()
         : TextSpan(
             children: [
-                TextSpan(
-                  text: '\u2026 ',
-                ),
-                TextSpan(
+              TextSpan(
+                text: '\u2026 ',
+              ),
+              TextSpan(
                   text: moreText,
-                ),
-              ],
+                  recognizer: TapGestureRecognizer()..onTap = onMore),
+            ],
             style: linkStyle,
-            recognizer: TapGestureRecognizer()
-              ..onTap = onMore as void Function()?);
+          );
 
     List<InlineSpan> parseText(String txt) {
       var newString = txt;
@@ -214,7 +213,7 @@ class ParsedText extends StatelessWidget {
           ));
           final endIndex = textPainter.getOffsetBefore(pos.offset);
           var _text = TextSpan(
-              children: expanded
+              children: expanded.value
                   ? parseText(text)
                   : parseText(text.substring(0, max(endIndex!, 0))),
               style: style);

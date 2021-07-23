@@ -26,14 +26,27 @@ class RichTextView extends StatefulWidget {
   final TextInputType? keyboardType;
   final FocusNode? focusNode;
   final bool readOnly;
+
+  /// which position to append the suggested list defaults to [SuggestionPosition.bottom].
   final SuggestionPosition? suggestionPosition;
+
   final void Function(String)? onHashTagClicked;
   final void Function(String)? onMentionClicked;
   final void Function(String)? onEmailClicked;
   final void Function(String)? onUrlClicked;
-  final Future<List<HashTag>?> Function(String)? onSearchTags;
-  final Future<List<Suggestion?>?> Function(String)? onSearchPeople;
+  final Future<List<HashTag>> Function(String)? onSearchTags;
+  final Future<List<Suggestion>> Function(String)? onSearchPeople;
   final List<ParsedType>? supportedTypes;
+
+  /// initial suggested hashtags when the user enters `#`
+  final List<HashTag>? hashtagSuggestions;
+
+  /// initial suggested mentions when the user enters `@`
+  final List<Suggestion>? mentionSuggestions;
+
+  /// height of the suggestion item
+  final double itemHeight;
+
   RichTextView(
       {this.text,
       this.maxLines,
@@ -54,14 +67,55 @@ class RichTextView extends StatefulWidget {
       this.focusNode,
       this.readOnly = false,
       this.initialValue,
-      this.suggestionPosition = SuggestionPosition.none,
+      this.suggestionPosition = SuggestionPosition.bottom,
       this.fontSize,
       this.onHashTagClicked,
       this.onMentionClicked,
       this.onEmailClicked,
       this.onUrlClicked,
       this.onSearchTags,
-      this.onSearchPeople});
+      this.onSearchPeople,
+      this.itemHeight = 80,
+      this.hashtagSuggestions = const [],
+      this.mentionSuggestions = const []});
+
+  /// Creates a copy of [RichTextView] but with only the fields needed for
+  /// the editor
+  factory RichTextView.editor(
+      {bool readOnly = false,
+      bool autoFocus = false,
+      String? initialValue,
+      TextEditingController? controller,
+      InputDecoration? decoration,
+      Function(String)? onChanged,
+      SuggestionPosition? suggestionPosition,
+      int? maxLength,
+      int? minLines,
+      TextInputType? keyboardType,
+      FocusNode? focusNode,
+      List<HashTag>? hashtagSuggestions,
+      List<Suggestion>? mentionSuggestions,
+      Future<List<HashTag>> Function(String)? onSearchTags,
+      Future<List<Suggestion>> Function(String)? onSearchPeople}) {
+    return RichTextView(
+      editable: true,
+      onSearchPeople: onSearchPeople,
+      onSearchTags: onSearchTags,
+      readOnly: readOnly,
+      suggestionPosition: suggestionPosition,
+      autoFocus: autoFocus,
+      initialValue: initialValue,
+      controller: controller,
+      onChanged: onChanged,
+      maxLength: maxLength,
+      minLines: minLines,
+      keyboardType: keyboardType,
+      focusNode: focusNode,
+      decoration: decoration,
+      hashtagSuggestions: hashtagSuggestions,
+      mentionSuggestions: mentionSuggestions,
+    );
+  }
 
   @override
   _RichTextViewState createState() => _RichTextViewState();
@@ -71,8 +125,9 @@ class _RichTextViewState extends State<RichTextView> {
   late int _maxLines;
   TextStyle? _style;
   bool flag = true;
-  bool expanded = false;
+  ValueNotifier<bool> expanded = ValueNotifier(false);
   late TextEditingController controller;
+  late SuggestionCubit cubit;
 
   @override
   void initState() {
@@ -80,9 +135,8 @@ class _RichTextViewState extends State<RichTextView> {
     _maxLines = widget.maxLines ?? 2;
     controller = widget.controller ??
         TextEditingController(text: widget.initialValue ?? '');
+    cubit = SuggestionCubit(widget.itemHeight);
   }
-
-  var cubit = SuggestionCubit<Suggestion>();
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +156,7 @@ class _RichTextViewState extends State<RichTextView> {
                 linkStyle: linkStyle,
                 onMore: () {
                   setState(() {
-                    expanded = true;
+                    expanded.value = true;
                   });
                 },
                 expanded: expanded,
@@ -114,7 +168,8 @@ class _RichTextViewState extends State<RichTextView> {
                       ParsedType.EMAIL,
                       ParsedType.MENTION,
                       ParsedType.PHONE,
-                      ParsedType.URL
+                      ParsedType.URL,
+                      ParsedType.HASH
                     ],
                 parse: [
                   MatchText(
@@ -160,8 +215,7 @@ class _RichTextViewState extends State<RichTextView> {
                       });
                     },
                   ),
-                BlocBuilder<SuggestionCubit<Suggestion>,
-                        SuggestionState<Suggestion>>(
+                BlocBuilder<SuggestionCubit, SuggestionState>(
                     bloc: cubit,
                     builder: (context, provider) {
                       return TextFormField(
@@ -172,38 +226,12 @@ class _RichTextViewState extends State<RichTextView> {
                           readOnly: widget.readOnly,
                           onChanged: (val) async {
                             widget.onChanged?.call(val);
-                            cubit.last =
-                                controller.text.split(' ').last.toLowerCase();
-                            if (provider.last != null &&
-                                (provider.last!.startsWith('@') ||
-                                    provider.last!.startsWith('#'))) {
-                              cubit.clear(
-                                load: true,
-                              );
-
-                              if (provider.last!.startsWith('@')) {
-                                if (widget.onSearchPeople == null) return null;
-                                var temp = provider.last!.length > 1
-                                    ? await widget.onSearchPeople!(
-                                        provider.last!.split('@')[1])
-                                    : provider.suggestions;
-                                cubit.clear(
-                                  people: temp,
-                                );
-                              } else {
-                                if (widget.onSearchTags == null) return null;
-                                await Future.delayed(
-                                    Duration(milliseconds: 500));
-                                var temp = provider.last!.length > 1
-                                    ? await widget.onSearchTags!(provider.last!)
-                                    : provider.hashtags;
-                                cubit.clear(
-                                  hash: temp,
-                                );
-                              }
-                            } else {
-                              cubit.clear();
-                            }
+                            cubit.onChanged(
+                                val.split(' ').last.toLowerCase(),
+                                widget.hashtagSuggestions,
+                                widget.mentionSuggestions,
+                                widget.onSearchTags,
+                                widget.onSearchPeople);
                           },
                           maxLines: widget.maxLines,
                           keyboardType: widget.keyboardType,

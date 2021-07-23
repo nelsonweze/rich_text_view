@@ -1,3 +1,9 @@
+## [0.0.2]
+
+* To use as a TextField, there's now RichTextView.editor
+* Added screenshot to README.md 
+* fixed some bugs and improved example codes
+
 ## [0.0.1]
 
 * Initial release to pub.dev

@@ -1,15 +1,19 @@
 enum SuggestionPosition { top, bottom, none }
 
 class HashTag {
-  String? hashtag;
-  int? counts;
+  String hashtag;
+  String? subtitle;
   bool trending;
   int? last24;
-  HashTag({this.hashtag, this.counts, this.trending = false, this.last24});
+  HashTag(
+      {required this.hashtag,
+      this.subtitle,
+      this.trending = false,
+      this.last24});
 
   HashTag.fromMap(Map map)
       : hashtag = map['hashtag'],
-        counts = map['count'],
+        subtitle = map['subtitle'],
         trending = map['trending'] ?? false;
 }
 

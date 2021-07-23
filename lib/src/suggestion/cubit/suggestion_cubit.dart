@@ -4,10 +4,11 @@ import 'package:rich_text_view/src/models.dart';
 
 part 'suggestion_state.dart';
 
-class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
-  SuggestionCubit() : super(SuggestionState<T>());
+class SuggestionCubit extends Cubit<SuggestionState> {
+  final double itemHeight;
+  SuggestionCubit(this.itemHeight) : super(SuggestionState());
 
-  set suggestions(List<T?> value) {
+  set suggestions(List<Suggestion> value) {
     emit(state.copyWith(suggestions: value));
   }
 
@@ -15,7 +16,41 @@ class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
     emit(state.copyWith(hashtags: value));
   }
 
-  set last(String? value) {
+  void onChanged(
+      String? value,
+      List<HashTag>? initalTags,
+      List<Suggestion>? intialMentions,
+      Future<List<HashTag>> Function(String)? onSearchTags,
+      Future<List<Suggestion>> Function(String)? onSearchPeople) async {
+    var last = value ?? '';
+    emit(state.copyWith(last: last));
+    var isHash = last.startsWith('#');
+    var isMention = last.startsWith('@');
+    if (last.isNotEmpty && (isHash || isMention)) {
+      if (last.length == 1) {
+        print(isHash);
+        clear(
+            hash: isMention ? null : initalTags,
+            people: isHash ? null : intialMentions);
+      } else if (isMention) {
+        var temp = onSearchPeople != null
+            ? await onSearchPeople(last.split('@')[1])
+            : intialMentions?.where((e) => e.title.contains(last)).toList();
+        clear(
+          people: temp ?? [],
+        );
+      } else if (isHash) {
+        await Future.delayed(Duration(milliseconds: 500));
+        var temp = onSearchTags != null
+            ? await onSearchTags(last)
+            : initalTags?.where((e) => e.hashtag.contains(last)).toList();
+        clear(
+          hash: temp,
+        );
+      }
+    } else {
+      clear();
+    }
     emit(state.copyWith(last: value));
   }
 
@@ -41,16 +76,17 @@ class SuggestionCubit<T> extends Cubit<SuggestionState<T>> {
     return controller;
   }
 
-  void clear({List<HashTag>? hash, List<T?>? people, bool load = false}) {
+  void clear(
+      {List<HashTag>? hash, List<Suggestion>? people, bool load = false}) {
     loading = load;
     suggestions = people ?? [];
     hashtags = hash ?? [];
     suggestionHeight = load
         ? 150.0
         : people != null
-            ? 280.0
+            ? (itemHeight * people.length).clamp(1.0, 280.0)
             : hash != null
-                ? (80.0 * hash.length).clamp(1.0, 280.0)
+                ? (itemHeight * hash.length).clamp(1.0, 280.0)
                 : 1.0;
   }
 }
