@@ -2,21 +2,21 @@ part of 'suggestion_cubit.dart';
 
 class SuggestionState<T> {
   final List<HashTag> hashtags;
-  final List<T?> suggestions;
-  final String? last;
+  final List<Suggestion?> suggestions;
+  final String last;
   final double suggestionHeight;
   final bool loading;
 
   SuggestionState(
       {this.hashtags = const [],
       this.suggestions = const [],
-      this.last,
+      this.last = '',
       this.suggestionHeight = 1,
       this.loading = false});
 
-  SuggestionState<T> copyWith(
+  SuggestionState<Suggestion> copyWith(
       {final List<HashTag>? hashtags,
-      final List<T?>? suggestions,
+      final List<Suggestion>? suggestions,
       final String? last,
       final double? suggestionHeight,
       final bool? loading}) {

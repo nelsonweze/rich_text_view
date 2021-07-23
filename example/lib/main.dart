@@ -15,17 +15,21 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter Rich Text View'),
+          title: Text('Flutter RichTextView Example'),
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(
+                height: 32,
+              ),
               Text('As a Text View Widget'),
               SizedBox(
                 height: 16,
               ),
               Container(
-                width: 300,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: RichTextView(
                   text:
                       "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send an email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
@@ -38,33 +42,54 @@ class MyApp extends StatelessWidget {
                   supportedTypes: [
                     ParsedType.EMAIL,
                     ParsedType.HASH,
-                    ParsedType.MENTION
+                    ParsedType.MENTION,
+                    ParsedType.URL
                   ],
                 ),
               ),
               SizedBox(
-                height: 24,
+                height: 48,
               ),
-              Text('As a Text Editor Widget'),
+              Text('As a TextField Widget'),
               SizedBox(
                 height: 16,
               ),
               Container(
                 width: 300,
-                child: RichTextView(
-                  editable: true,
+                child: RichTextView.editor(
                   suggestionPosition: SuggestionPosition.bottom,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  mentionSuggestions: [
+                    Suggestion(
+                        imageURL: 'imageURL',
+                        subtitle: 'nelly',
+                        title: 'Nelly Gane'),
+                    Suggestion(
+                        imageURL: 'imageURL',
+                        subtitle: 'gaus',
+                        title: 'Gaus Shell')
+                  ],
                   onSearchPeople: (term) async {
                     return [
                       Suggestion(
                           imageURL: 'imageURL',
-                          subtitle: 'I am the little guy from Coal city',
-                          title: 'Nelly Gane')
+                          subtitle: term.toLowerCase(),
+                          title: term)
                     ];
                   },
                   onSearchTags: (term) async {
                     return [
-                      HashTag(hashtag: 'Dart', counts: 29, trending: true)
+                      HashTag(
+                          hashtag: '#Dart',
+                          subtitle: '30 posts',
+                          trending: true),
+                      HashTag(
+                        hashtag: '#Flutter',
+                        subtitle: '56 posts',
+                      )
                     ];
                   },
                 ),

@@ -4,7 +4,7 @@ import 'package:rich_text_view/rich_text_view.dart';
 import 'cubit/suggestion_cubit.dart';
 
 class SuggestionWidget extends StatefulWidget {
-  final SuggestionCubit<Suggestion> cubit;
+  final SuggestionCubit cubit;
   final TextEditingController? controller;
   final Function(TextEditingController)? onTap;
   final SuggestionPosition? suggestionPosition;
@@ -23,8 +23,7 @@ class SuggestionWidget extends StatefulWidget {
 class _SuggestionWidgetState extends State<SuggestionWidget> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SuggestionCubit<Suggestion>,
-            SuggestionState<Suggestion>>(
+    return BlocBuilder<SuggestionCubit, SuggestionState>(
         bloc: widget.cubit,
         builder: (context, provider) {
           var border = BorderSide(
@@ -33,7 +32,6 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
               color: provider.suggestionHeight > 1
                   ? Colors.grey[200]!
                   : Colors.transparent);
-
           return Container(
               constraints: BoxConstraints(
                 minHeight: 1,
@@ -54,12 +52,15 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
               child: provider.loading
                   ? Container(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: CircularProgressIndicator(),
-                    )
+                      child: Center(
+                        child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator()),
+                      ))
                   : Scrollbar(
                       thickness: 3,
-                      child: provider.suggestions.isNotEmpty &&
-                              provider.last!.startsWith('@')
+                      child: provider.last.startsWith('@')
                           ? ListView.builder(
                               itemCount: provider.suggestions.length,
                               itemBuilder: (context, index) {
@@ -91,12 +92,12 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                                         widget.onTap!(_controller);
                                       },
                                       title: Text(
-                                        item.hashtag!,
+                                        item.hashtag,
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle2,
                                       ),
-                                      subtitle: Text('${item.counts} posts'),
+                                      subtitle: Text(item.subtitle ?? ''),
                                       trailing: item.trending
                                           ? Text('Trending')
                                           : Container(
@@ -128,17 +129,17 @@ class ListUserItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onClick?.call(),
+      onTap: onClick,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
         child: Row(children: <Widget>[
           CircleAvatar(
             backgroundImage: NetworkImage(imageUrl),
-            radius: 45,
+            radius: 20,
           ),
           Flexible(
               child: Container(
-            margin: EdgeInsets.only(left: 20.0),
+            margin: EdgeInsets.only(left: 20.0, top: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
