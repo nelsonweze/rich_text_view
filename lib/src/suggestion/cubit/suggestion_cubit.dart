@@ -28,12 +28,11 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     var isMention = last.startsWith('@');
     if (last.isNotEmpty && (isHash || isMention)) {
       if (last.length == 1) {
-        print(isHash);
         clear(
             hash: isMention ? null : initalTags,
             people: isHash ? null : intialMentions);
       } else if (isMention) {
-        var temp = onSearchPeople != null
+        var temp = onSearchPeople != null && last.length > 1
             ? await onSearchPeople(last.split('@')[1])
             : intialMentions?.where((e) => e.title.contains(last)).toList();
         clear(

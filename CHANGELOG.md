@@ -1,3 +1,6 @@
+## [0.0.3]
+*  Fix issues with bold style
+
 ## [0.0.2]
 
 * To use as a TextField, there's now RichTextView.editor

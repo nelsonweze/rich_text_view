@@ -32,18 +32,20 @@ class MyApp extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: RichTextView(
                   text:
-                      "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send an email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
+                      "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send a *bold* email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
                   maxLines: 3,
                   align: TextAlign.center,
                   onEmailClicked: (email) => print('$email clicked'),
                   onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
                   onMentionClicked: (mention) => print('$mention clicked'),
                   onUrlClicked: (url) => print('visting $url?'),
+                  style: TextStyle(),
                   supportedTypes: [
                     ParsedType.EMAIL,
                     ParsedType.HASH,
                     ParsedType.MENTION,
-                    ParsedType.URL
+                    ParsedType.URL,
+                    ParsedType.BOLD
                   ],
                 ),
               ),
