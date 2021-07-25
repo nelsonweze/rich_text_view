@@ -1,5 +1,6 @@
 ## [0.0.3]
-*  Fix issues with bold style
+*  Fix bold style issue
+*  Fix issue when selectable is set to false
 
 ## [0.0.2]
 
