@@ -16,7 +16,7 @@ const phonePattern =
     r'(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})';
 
 const String starPattern = r'\*.*?\*';
-const boldPattern = r'\$.*?\$';
+const boldPattern = r'\*.*?\*';
 const hashPattern = r'\B#+([^\x00-\x7F]|\w)+';
 const mentionPattern = r'\B@+([\w]+)\b';
 
@@ -236,8 +236,6 @@ class ParsedText extends StatelessWidget {
         return RichText(
           textAlign: alignment,
           textDirection: textDirection,
-          softWrap: true,
-          overflow: TextOverflow.ellipsis,
           textScaleFactor: textScaleFactor,
           text: textSpan,
           textWidthBasis: textWidthBasis,

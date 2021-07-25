@@ -12,6 +12,7 @@ class RichTextView extends StatefulWidget {
   final TextAlign? align;
   final TextStyle? style;
   final TextStyle? linkStyle;
+  final TextStyle? boldStyle;
   final bool showMoreText;
   final double? fontSize;
   final bool selectable;
@@ -34,6 +35,7 @@ class RichTextView extends StatefulWidget {
   final void Function(String)? onMentionClicked;
   final void Function(String)? onEmailClicked;
   final void Function(String)? onUrlClicked;
+  final void Function(String)? onBoldClicked;
   final Future<List<HashTag>> Function(String)? onSearchTags;
   final Future<List<Suggestion>> Function(String)? onSearchPeople;
   final List<ParsedType>? supportedTypes;
@@ -54,6 +56,7 @@ class RichTextView extends StatefulWidget {
       this.align,
       this.style,
       this.linkStyle,
+      this.boldStyle,
       this.showMoreText = true,
       this.selectable = true,
       this.controller,
@@ -73,6 +76,7 @@ class RichTextView extends StatefulWidget {
       this.onMentionClicked,
       this.onEmailClicked,
       this.onUrlClicked,
+      this.onBoldClicked,
       this.onSearchTags,
       this.onSearchPeople,
       this.itemHeight = 80,
@@ -138,6 +142,10 @@ class _RichTextViewState extends State<RichTextView> {
     cubit = SuggestionCubit(widget.itemHeight);
   }
 
+  Map<String, String?> formatBold({String? pattern, String? str}) {
+    return {'display': str?.substring(1, str.length - 1)};
+  }
+
   @override
   Widget build(BuildContext context) {
     _style = widget.style ??
@@ -179,8 +187,13 @@ class _RichTextViewState extends State<RichTextView> {
                   ),
                   MatchText(
                     type: ParsedType.BOLD,
-                    style: linkStyle?.copyWith(fontWeight: FontWeight.bold),
-                    onTap: (txt) {},
+                    renderText: formatBold,
+                    style: widget.boldStyle ??
+                        widget.style?.copyWith(fontWeight: FontWeight.bold),
+                    onTap: (txt) {
+                      widget.onBoldClicked
+                          ?.call(txt.substring(1, txt.length - 1));
+                    },
                   ),
                   MatchText(
                     type: ParsedType.MENTION,

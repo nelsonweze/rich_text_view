@@ -1,3 +1,7 @@
+## [0.0.3]
+*  Fix bold style issue
+*  Fix issue when selectable is set to false
+
 ## [0.0.2]
 
 * To use as a TextField, there's now RichTextView.editor
