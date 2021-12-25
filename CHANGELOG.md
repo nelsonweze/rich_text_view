@@ -1,5 +1,5 @@
-## [0.0.4]
-*  Hot fixes 
+## [0.0.5]
+*  Hot fixes and dependency upgrade
 ## [0.0.3]
 *  Fix bold style issue
 *  Fix issue when selectable is set to false
