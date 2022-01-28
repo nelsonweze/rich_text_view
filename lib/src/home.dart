@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_text_view/rich_text_view.dart';
-import 'suggestion/cubit/suggestion_cubit.dart';
-import 'suggestion/widget.dart';
 import 'util.dart';
 
 class RichTextView extends StatefulWidget {
@@ -126,7 +124,6 @@ class RichTextView extends StatefulWidget {
 }
 
 class _RichTextViewState extends State<RichTextView> {
-  late int _maxLines;
   TextStyle? _style;
   bool flag = true;
   ValueNotifier<bool> expanded = ValueNotifier(false);
@@ -136,7 +133,6 @@ class _RichTextViewState extends State<RichTextView> {
   @override
   void initState() {
     super.initState();
-    _maxLines = widget.maxLines ?? 2;
     controller = widget.controller ??
         TextEditingController(text: widget.initialValue ?? '');
     cubit = SuggestionCubit(widget.itemHeight);
@@ -155,7 +151,7 @@ class _RichTextViewState extends State<RichTextView> {
             .copyWith(fontSize: widget.fontSize);
 
     var linkStyle = widget.linkStyle ??
-        _style?.copyWith(color: Theme.of(context).accentColor);
+        _style?.copyWith(color: Theme.of(context).colorScheme.secondary);
 
     return !widget.editable
         ? Container(
@@ -211,7 +207,7 @@ class _RichTextViewState extends State<RichTextView> {
                     onTap: widget.onUrlClicked,
                   ),
                 ],
-                maxLines: _maxLines,
+                maxLines: widget.maxLines,
                 style: _style))
         : Padding(
             padding: const EdgeInsets.only(top: 16.0),

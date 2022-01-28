@@ -1,3 +1,5 @@
+## [0.0.6]
+* Fixed issue with maxLines
 ## [0.0.5]
 *  Hot fixes and dependency upgrade
 ## [0.0.3]
