@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_text_view/rich_text_view.dart';
-import 'cubit/suggestion_cubit.dart';
 
-class SuggestionWidget extends StatefulWidget {
+class SearchItemWidget extends StatefulWidget {
   final SuggestionCubit cubit;
   final TextEditingController? controller;
   final Function(TextEditingController)? onTap;
   final SuggestionPosition? suggestionPosition;
-  final Widget Function(Suggestion)? suggestionCard;
-  SuggestionWidget(
+  final Widget Function(Mention)? mentionSearchCard;
+  final Widget Function(HashTag)? hashTagSearchCard;
+  final Function(Mention)? onMentionSelected;
+  final Function(HashTag)? onHashTagSelected;
+  SearchItemWidget(
       {required this.cubit,
       this.controller,
       this.onTap,
       this.suggestionPosition,
-      this.suggestionCard});
+      this.mentionSearchCard,
+      this.hashTagSearchCard,
+      this.onHashTagSelected,
+      this.onMentionSelected});
 
   @override
-  _SuggestionWidgetState createState() => _SuggestionWidgetState();
+  _SearchItemWidgetState createState() => _SearchItemWidgetState();
 }
 
-class _SuggestionWidgetState extends State<SuggestionWidget> {
+class _SearchItemWidgetState extends State<SearchItemWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SuggestionCubit, SuggestionState>(
@@ -50,7 +55,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                 bottom: border,
               )),
               child: provider.loading
-                  ? Container(
+                  ? Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: Center(
                         child: SizedBox(
@@ -62,52 +67,61 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                       thickness: 3,
                       child: provider.last.startsWith('@')
                           ? ListView.builder(
-                              itemCount: provider.suggestions.length,
+                              itemCount: provider.mentions.length,
                               itemBuilder: (context, index) {
-                                var user = provider.suggestions[index];
-                                if (user == null) return Container();
-                                return widget.suggestionCard?.call(user) ??
-                                    ListUserItem(
-                                      title: user.title,
-                                      subtitle: user.subtitle,
-                                      imageUrl: user.imageURL,
-                                      onClick: () {
-                                        var _controller = widget.cubit
-                                            .onuserselect('@${user.subtitle} ',
-                                                widget.controller!);
-                                        widget.onTap!(_controller);
-                                      },
-                                    );
+                                var mention = provider.mentions[index];
+                                if (mention == null) return SizedBox();
+
+                                return InkWell(
+                                  onTap: () {
+                                    var _controller = widget.cubit.onuserselect(
+                                        '@${mention.subtitle} ',
+                                        widget.controller!);
+                                    widget.onMentionSelected?.call(mention);
+                                    widget.onTap!(_controller);
+                                  },
+                                  child:
+                                      widget.mentionSearchCard?.call(mention) ??
+                                          ListUserItem(
+                                            title: mention.title,
+                                            subtitle: mention.subtitle,
+                                            imageUrl: mention.imageURL,
+                                          ),
+                                );
                               },
                             )
                           : provider.hashtags.isNotEmpty
                               ? ListView.builder(
                                   itemBuilder: (context, position) {
                                     var item = provider.hashtags[position];
-                                    return ListTile(
-                                      onTap: () {
-                                        var _controller = widget.cubit
-                                            .onuserselect('${item.hashtag} ',
-                                                widget.controller!);
-                                        widget.onTap!(_controller);
-                                      },
-                                      title: Text(
-                                        item.hashtag,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle2,
-                                      ),
-                                      subtitle: Text(item.subtitle ?? ''),
-                                      trailing: item.trending
-                                          ? Text('Trending')
-                                          : Container(
-                                              height: 0,
-                                              width: 0,
-                                            ),
-                                    );
+                                    return InkWell(
+                                        onTap: () {
+                                          var _controller = widget.cubit
+                                              .onuserselect('${item.hashtag} ',
+                                                  widget.controller!);
+                                          widget.onHashTagSelected?.call(item);
+                                          widget.onTap!(_controller);
+                                        },
+                                        child: widget.hashTagSearchCard
+                                                ?.call(item) ??
+                                            ListTile(
+                                              onTap: null,
+                                              title: Text(
+                                                item.hashtag,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle2,
+                                              ),
+                                              subtitle:
+                                                  Text(item.subtitle ?? ''),
+                                              trailing: item.trending
+                                                  ? Text('Trending')
+                                                  : SizedBox(
+                                                      height: 0, width: 0),
+                                            ));
                                   },
                                   itemCount: provider.hashtags.length)
-                              : Container(),
+                              : SizedBox(),
                     ));
         });
   }
@@ -117,66 +131,59 @@ class ListUserItem extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String subtitle;
-  final Function()? onClick;
 
   ListUserItem(
       {Key? key,
       required this.imageUrl,
       required this.title,
-      this.onClick,
       required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onClick,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-        child: Row(children: <Widget>[
-          CircleAvatar(
-            backgroundImage: NetworkImage(imageUrl),
-            radius: 20,
-          ),
-          Flexible(
-              child: Container(
-            margin: EdgeInsets.only(left: 20.0, top: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        title.trim(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(fontWeight: FontWeight.w600),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 2.0, right: 8.0),
-                  child: Container(
-                      child: Text(
-                    subtitle,
-                    overflow: TextOverflow.ellipsis,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+      child: Row(children: <Widget>[
+        CircleAvatar(
+          backgroundImage: NetworkImage(imageUrl),
+          radius: 20,
+        ),
+        Flexible(
+            child: Container(
+          margin: EdgeInsets.only(left: 20.0, top: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(
+                    title.trim(),
                     style: Theme.of(context)
                         .textTheme
-                        .caption!
-                        .copyWith(fontSize: 14),
-                  )),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                )
-              ],
-            ),
-          )),
-        ]),
-      ),
+                        .bodyText1!
+                        .copyWith(fontWeight: FontWeight.w600),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 2.0, right: 8.0),
+                child: Container(
+                    child: Text(
+                  subtitle,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption!
+                      .copyWith(fontSize: 14),
+                )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+              )
+            ],
+          ),
+        )),
+      ]),
     );
   }
 }
