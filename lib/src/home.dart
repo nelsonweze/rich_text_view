@@ -11,7 +11,7 @@ class RichTextView extends StatefulWidget {
   final TextStyle? style;
   final TextStyle? linkStyle;
   final TextStyle? boldStyle;
-  final bool showMoreText;
+  final bool truncate;
   final double? fontSize;
   final bool selectable;
   final bool editable;
@@ -35,17 +35,29 @@ class RichTextView extends StatefulWidget {
   final void Function(String)? onUrlClicked;
   final void Function(String)? onBoldClicked;
   final Future<List<HashTag>> Function(String)? onSearchTags;
-  final Future<List<Suggestion>> Function(String)? onSearchPeople;
+  final Future<List<Mention>> Function(String)? onSearchMention;
   final List<ParsedType>? supportedTypes;
 
   /// initial suggested hashtags when the user enters `#`
   final List<HashTag>? hashtagSuggestions;
 
   /// initial suggested mentions when the user enters `@`
-  final List<Suggestion>? mentionSuggestions;
+  final List<Mention>? mentionSuggestions;
 
   /// height of the suggestion item
   final double itemHeight;
+
+  /// Callback for when a suggestion is selected during search
+  final Function(Mention)? onMentionSelected;
+
+  /// Callback for when a hashtag is selected during search
+  final Function(HashTag)? onHashTagSelected;
+
+  /// Custom mention widget shown during search
+  final Widget Function(Mention)? mentionSearchCard;
+
+  /// Custom hashtag widget shown during search
+  final Widget Function(HashTag)? hashTagSearchCard;
 
   RichTextView(
       {this.text,
@@ -55,7 +67,7 @@ class RichTextView extends StatefulWidget {
       this.style,
       this.linkStyle,
       this.boldStyle,
-      this.showMoreText = true,
+      this.truncate = true,
       this.selectable = true,
       this.controller,
       this.decoration,
@@ -76,10 +88,14 @@ class RichTextView extends StatefulWidget {
       this.onUrlClicked,
       this.onBoldClicked,
       this.onSearchTags,
-      this.onSearchPeople,
+      this.onSearchMention,
       this.itemHeight = 80,
       this.hashtagSuggestions = const [],
-      this.mentionSuggestions = const []});
+      this.mentionSuggestions = const [],
+      this.onHashTagSelected,
+      this.onMentionSelected,
+      this.hashTagSearchCard,
+      this.mentionSearchCard});
 
   /// Creates a copy of [RichTextView] but with only the fields needed for
   /// the editor
@@ -96,12 +112,16 @@ class RichTextView extends StatefulWidget {
       TextInputType? keyboardType,
       FocusNode? focusNode,
       List<HashTag>? hashtagSuggestions,
-      List<Suggestion>? mentionSuggestions,
+      List<Mention>? mentionSuggestions,
       Future<List<HashTag>> Function(String)? onSearchTags,
-      Future<List<Suggestion>> Function(String)? onSearchPeople}) {
+      Future<List<Mention>> Function(String)? onSearchMention,
+      Function(Mention)? onMentionSelected,
+      Function(HashTag)? onHashTagSelected,
+      final Widget Function(Mention)? mentionSearchCard,
+      final Widget Function(HashTag)? hashTagSearchCard}) {
     return RichTextView(
       editable: true,
-      onSearchPeople: onSearchPeople,
+      onSearchMention: onSearchMention,
       onSearchTags: onSearchTags,
       readOnly: readOnly,
       suggestionPosition: suggestionPosition,
@@ -116,6 +136,10 @@ class RichTextView extends StatefulWidget {
       decoration: decoration,
       hashtagSuggestions: hashtagSuggestions,
       mentionSuggestions: mentionSuggestions,
+      onMentionSelected: onMentionSelected,
+      onHashTagSelected: onHashTagSelected,
+      mentionSearchCard: mentionSearchCard,
+      hashTagSearchCard: hashTagSearchCard,
     );
   }
 
@@ -136,6 +160,7 @@ class _RichTextViewState extends State<RichTextView> {
     controller = widget.controller ??
         TextEditingController(text: widget.initialValue ?? '');
     cubit = SuggestionCubit(widget.itemHeight);
+    expanded.value = !widget.truncate;
   }
 
   Map<String, String?> formatBold({String? pattern, String? str}) {
@@ -144,6 +169,7 @@ class _RichTextViewState extends State<RichTextView> {
 
   @override
   Widget build(BuildContext context) {
+    var _maxLines = widget.truncate ? (widget.maxLines ?? 2) : widget.maxLines;
     _style = widget.style ??
         Theme.of(context)
             .textTheme
@@ -207,61 +233,60 @@ class _RichTextViewState extends State<RichTextView> {
                     onTap: widget.onUrlClicked,
                   ),
                 ],
-                maxLines: widget.maxLines,
+                maxLines: _maxLines,
                 style: _style))
-        : Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (widget.suggestionPosition == SuggestionPosition.top)
-                  SuggestionWidget(
-                    cubit: cubit,
-                    controller: controller,
-                    onTap: (contrl) {
-                      setState(() {
-                        controller = contrl;
-                      });
-                    },
-                  ),
-                BlocBuilder<SuggestionCubit, SuggestionState>(
-                    bloc: cubit,
-                    builder: (context, provider) {
-                      return TextFormField(
-                          style: widget.style,
-                          focusNode: widget.focusNode,
-                          controller: controller,
-                          textCapitalization: TextCapitalization.sentences,
-                          readOnly: widget.readOnly,
-                          onChanged: (val) async {
-                            widget.onChanged?.call(val);
-                            cubit.onChanged(
-                                val.split(' ').last.toLowerCase(),
-                                widget.hashtagSuggestions,
-                                widget.mentionSuggestions,
-                                widget.onSearchTags,
-                                widget.onSearchPeople);
-                          },
-                          maxLines: widget.maxLines,
-                          keyboardType: widget.keyboardType,
-                          maxLength: widget.maxLength,
-                          minLines: widget.minLines,
-                          autofocus: widget.autoFocus,
-                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                          decoration: widget.decoration);
-                    }),
-                if (widget.suggestionPosition == SuggestionPosition.bottom)
-                  SuggestionWidget(
-                    cubit: cubit,
-                    controller: controller,
-                    onTap: (contrl) {
-                      setState(() {
-                        controller = contrl;
-                      });
-                    },
-                  ),
-              ],
-            ),
-          );
+        : Builder(builder: (context) {
+            var searchItemWidget = SearchItemWidget(
+              cubit: cubit,
+              controller: controller,
+              onTap: (contrl) {
+                setState(() {
+                  controller = contrl;
+                });
+              },
+              onHashTagSelected: widget.onHashTagSelected,
+              onMentionSelected: widget.onMentionSelected,
+              mentionSearchCard: widget.mentionSearchCard,
+              hashTagSearchCard: widget.hashTagSearchCard,
+            );
+            return Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (widget.suggestionPosition == SuggestionPosition.top)
+                    searchItemWidget,
+                  BlocBuilder<SuggestionCubit, SuggestionState>(
+                      bloc: cubit,
+                      builder: (context, provider) {
+                        return TextFormField(
+                            style: widget.style,
+                            focusNode: widget.focusNode,
+                            controller: controller,
+                            textCapitalization: TextCapitalization.sentences,
+                            readOnly: widget.readOnly,
+                            onChanged: (val) async {
+                              widget.onChanged?.call(val);
+                              cubit.onChanged(
+                                  val.split(' ').last.toLowerCase(),
+                                  widget.hashtagSuggestions,
+                                  widget.mentionSuggestions,
+                                  widget.onSearchTags,
+                                  widget.onSearchMention);
+                            },
+                            maxLines: widget.maxLines,
+                            keyboardType: widget.keyboardType,
+                            maxLength: widget.maxLength,
+                            minLines: widget.minLines,
+                            autofocus: widget.autoFocus,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                            decoration: widget.decoration);
+                      }),
+                  if (widget.suggestionPosition == SuggestionPosition.bottom)
+                    searchItemWidget,
+                ],
+              ),
+            );
+          });
   }
 }

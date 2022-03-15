@@ -1,7 +1,12 @@
-## [0.0.6]
-* Fixed issue with maxLines
-## [0.0.5]
-*  Hot fixes and dependency upgrade
+## [1.0.0-dev-1]
+
+* BREAKING: ```Suggestion``` renamed to ```Mention```
+            ```onSearchPeople``` renamed to ```onSearchMention```
+            ```onSuggestionSelected``` renamed to ```onMentionSelected```
+            ```showMoreText``` renamed to ```truncate```
+* Added callbacks for when a mention or hashtag is selected during search
+* Added option to use custom widgets for suggestion items 
+
 ## [0.0.3]
 *  Fix bold style issue
 *  Fix issue when selectable is set to false

@@ -17,18 +17,18 @@ class HashTag {
         trending = map['trending'] ?? false;
 }
 
-class Suggestion {
+class Mention {
   final String title;
   final String subtitle;
   final String imageURL;
   final Map<String, dynamic>? parameters;
-  Suggestion(
+  Mention(
       {required this.imageURL,
       required this.subtitle,
       required this.title,
       this.parameters});
 
-  Suggestion.fromMap(Map<String, dynamic> map, {Map<String, dynamic>? params})
+  Mention.fromMap(Map<String, dynamic> map, {Map<String, dynamic>? params})
       : title = map['title'],
         subtitle = map['subtitle'],
         imageURL = map['imageURL'],
