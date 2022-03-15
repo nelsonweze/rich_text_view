@@ -11,18 +11,24 @@ A simple yet powerful rich text view that supports mention, hashtag, email, url 
 ###  RichTextView as a Text Widget
 ```dart
  RichTextView(
-              text:
-                  "Who else thinks it's thinks it's just cool to mention
-                     @jane when #JaneMustLive is trending without even trying
-                     to send an email to janedoe@gmail.comto verify the 
-                     facts talkmore of visiting www.janedoe.com",
-              maxLines: 3,
-              align: TextAlign.center,
-              onEmailClicked: (email) => print('$email clicked'),
-              onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
-              onMentionClicked: (mention) => print('$mention clicked'),
-              onUrlClicked: (url) => print('visting $url?'),
-            )
+                  text:
+                      "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send a *bold* email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
+                  maxLines: 3,
+                  align: TextAlign.center,
+                  onEmailClicked: (email) => print('$email clicked'),
+                  onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
+                  onMentionClicked: (mention) => print('$mention clicked'),
+                  onUrlClicked: (url) => print('visting $url?'),
+                  style: TextStyle(),
+                  truncate: true,
+                  supportedTypes: [
+                    ParsedType.EMAIL,
+                    ParsedType.HASH,
+                    ParsedType.MENTION,
+                    ParsedType.URL,
+                    ParsedType.BOLD
+                  ],
+                )
 ```
 ### RichTextView as a Text Editor
 
@@ -32,17 +38,41 @@ You can use the RichTextView widget as an input field that supports suggestions 
 
 RichTextView.editor(
                   suggestionPosition: SuggestionPosition.bottom,
-                  onSearchPeople: (term) async {
-                    return [
-                      Suggestion(
-                          imageURL: 'imageURL',
-                          subtitle: 'I am the little guy from Coal city',
-                          title: 'Nelly Gane')
-                    ];
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  mentionSuggestions: [
+                    Mention(
+                        imageURL: 'imageURL',
+                        subtitle: 'nelly',
+                        title: 'Nelly Gane'),
+                    Mention(
+                        imageURL: 'imageURL',
+                        subtitle: 'gaus',
+                        title: 'Gaus Shell')
+                  ],
+                  onSearchMention: (term) async {
+                    return List.generate(
+                        20,
+                        (index) => Mention(
+                            imageURL: 'imageURL',
+                            subtitle: term.toLowerCase(),
+                            title: '$term $index'));
+                  },
+                  onMentionSelected: (suggestion) {
+                    print(suggestion.toString());
                   },
                   onSearchTags: (term) async {
                     return [
-                      HashTag(hashtag: 'Dart', subtitle: '20 posts', trending: true)
+                      HashTag(
+                          hashtag: '#Dart',
+                          subtitle: '30 posts',
+                          trending: true),
+                      HashTag(
+                        hashtag: '#Flutter',
+                        subtitle: '56 posts',
+                      )
                     ];
                   },
                 )

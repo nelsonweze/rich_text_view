@@ -1,6 +1,6 @@
 name: rich_text_view
 description: A simple yet powerful rich text view that supports mention, hashtag, emial, url and see more.
-version: 0.0.3
+version: 1.0.0-dev-1
 homepage: https://github.com/nelstein/rich_text_view
 
 environment:
@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bloc: ^7.0.0
-  flutter_bloc: ^7.0.1
+  bloc: ^8.0.1
+  flutter_bloc: ^8.0.0
 
 dev_dependencies:
   flutter_test:

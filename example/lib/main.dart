@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
                   onMentionClicked: (mention) => print('$mention clicked'),
                   onUrlClicked: (url) => print('visting $url?'),
                   style: TextStyle(),
+                  truncate: true,
                   supportedTypes: [
                     ParsedType.EMAIL,
                     ParsedType.HASH,
@@ -65,22 +66,25 @@ class MyApp extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16)),
                   ),
                   mentionSuggestions: [
-                    Suggestion(
+                    Mention(
                         imageURL: 'imageURL',
                         subtitle: 'nelly',
                         title: 'Nelly Gane'),
-                    Suggestion(
+                    Mention(
                         imageURL: 'imageURL',
                         subtitle: 'gaus',
                         title: 'Gaus Shell')
                   ],
-                  onSearchPeople: (term) async {
-                    return [
-                      Suggestion(
-                          imageURL: 'imageURL',
-                          subtitle: term.toLowerCase(),
-                          title: term)
-                    ];
+                  onSearchMention: (term) async {
+                    return List.generate(
+                        20,
+                        (index) => Mention(
+                            imageURL: 'imageURL',
+                            subtitle: term.toLowerCase(),
+                            title: '$term $index'));
+                  },
+                  onMentionSelected: (suggestion) {
+                    print(suggestion.toString());
                   },
                   onSearchTags: (term) async {
                     return [
