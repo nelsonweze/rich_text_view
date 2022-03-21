@@ -1,3 +1,9 @@
+## [1.0.0-dev.2]
+
+* BREAKING: Separated RichTextEditor from RichTextView to avoid confusion with parameters.
+* Added more text field parameters
+* Added support to toggle between view more and view less
+
 ## [1.0.0-dev-1]
 
 * BREAKING: ```Suggestion``` renamed to ```Mention```

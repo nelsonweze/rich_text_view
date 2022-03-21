@@ -21,7 +21,7 @@ class SuggestionCubit extends Cubit<SuggestionState> {
       List<HashTag>? initalTags,
       List<Mention>? intialMentions,
       Future<List<HashTag>> Function(String)? onSearchTags,
-      Future<List<Mention>> Function(String)? onSearchPeople) async {
+      Future<List<Mention>> Function(String)? onSearchMention) async {
     var last = value ?? '';
     emit(state.copyWith(last: last));
     var isHash = last.startsWith('#');
@@ -32,20 +32,15 @@ class SuggestionCubit extends Cubit<SuggestionState> {
             hash: isMention ? null : initalTags,
             people: isHash ? null : intialMentions);
       } else if (isMention) {
-        var temp = onSearchPeople != null && last.length > 1
-            ? await onSearchPeople(last.split('@')[1])
+        var temp = onSearchMention != null && last.length > 1
+            ? await onSearchMention(last.split('@')[1])
             : intialMentions?.where((e) => e.title.contains(last)).toList();
-        clear(
-          people: temp ?? [],
-        );
+        clear(people: temp ?? []);
       } else if (isHash) {
-        await Future.delayed(Duration(milliseconds: 500));
         var temp = onSearchTags != null
             ? await onSearchTags(last)
             : initalTags?.where((e) => e.hashtag.contains(last)).toList();
-        clear(
-          hash: temp,
-        );
+        clear(hash: temp);
       }
     } else {
       clear();
