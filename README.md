@@ -1,6 +1,6 @@
 # rich_text_view
 
-A simple yet powerful rich text view that supports mention, hashtag, email, url and see more.
+A simple yet powerful rich text view that supports mention, hashtag, email, url and view more.
 
 ## Example
 
@@ -8,19 +8,22 @@ A simple yet powerful rich text view that supports mention, hashtag, email, url 
     <img src="https://raw.githubusercontent.com/nelstein/rich_text_view/main/screenshots/homepage.png" width="200px" height="auto" hspace="20"/>
 </p>
 
-###  RichTextView as a Text Widget
+###  RichTextView 
 ```dart
  RichTextView(
-                  text:
-                      "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send a *bold* email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
+           text:
+                      '''Who else thinks it's thinks it's just cool to mention 
+                      @jane when #JaneMustLive is trending without even trying 
+                      to send a *bold* email to janedoe@gmail.com and verify the
+                       facts talkmore of visiting www.janedoe.com''',
                   maxLines: 3,
-                  align: TextAlign.center,
                   onEmailClicked: (email) => print('$email clicked'),
                   onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
                   onMentionClicked: (mention) => print('$mention clicked'),
                   onUrlClicked: (url) => print('visting $url?'),
-                  style: TextStyle(),
                   truncate: true,
+                  viewLessText: 'less',
+                  linkStyle: TextStyle(color: Colors.blue),
                   supportedTypes: [
                     ParsedType.EMAIL,
                     ParsedType.HASH,
@@ -30,14 +33,14 @@ A simple yet powerful rich text view that supports mention, hashtag, email, url 
                   ],
                 )
 ```
-### RichTextView as a Text Editor
+### RichTextEditor 
 
-You can use the RichTextView widget as an input field that supports suggestions when  mentioning or using hashtags
+RichTextEditor is an input field that supports suggestions when  mentioning or using hashtags
 
 ```dart
 
-RichTextView.editor(
-                  suggestionPosition: SuggestionPosition.bottom,
+RichTextEditor(
+  suggestionPosition: SuggestionPosition.bottom,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16)),
@@ -78,4 +81,6 @@ RichTextView.editor(
                 )
 ```
 
+### Todo
 
+* Add styles to mentions/hashtags in RichTextEditor
