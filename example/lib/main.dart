@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter RichTextView Example'),
+          title: Text('Flutter RichTextView'),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
               SizedBox(
                 height: 32,
               ),
-              Text('As a Text View Widget'),
+              Text('RichTextView'),
               SizedBox(
                 height: 16,
               ),
@@ -32,15 +32,18 @@ class MyApp extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: RichTextView(
                   text:
-                      "Who else thinks it's thinks it's just cool to mention @jane when #JaneMustLive is trending without even trying to send a *bold* email to janedoe@gmail.com and verify the facts talkmore of visiting www.janedoe.com",
+                      '''Who else thinks it's thinks it's just cool to mention 
+                      @jane when #JaneMustLive is trending without even trying 
+                      to send a *bold* email to janedoe@gmail.com and verify the
+                       facts talkmore of visiting www.janedoe.com''',
                   maxLines: 3,
-                  align: TextAlign.center,
                   onEmailClicked: (email) => print('$email clicked'),
                   onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
                   onMentionClicked: (mention) => print('$mention clicked'),
                   onUrlClicked: (url) => print('visting $url?'),
-                  style: TextStyle(),
                   truncate: true,
+                  viewLessText: 'less',
+                  linkStyle: TextStyle(color: Colors.blue),
                   supportedTypes: [
                     ParsedType.EMAIL,
                     ParsedType.HASH,
@@ -53,13 +56,13 @@ class MyApp extends StatelessWidget {
               SizedBox(
                 height: 48,
               ),
-              Text('As a TextField Widget'),
+              Text('RichTextEditor'),
               SizedBox(
                 height: 16,
               ),
               Container(
                 width: 300,
-                child: RichTextView.editor(
+                child: RichTextEditor(
                   suggestionPosition: SuggestionPosition.bottom,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
