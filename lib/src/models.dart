@@ -18,6 +18,7 @@ class HashTag {
 }
 
 class Mention {
+  final String? id;
   final String title;
   final String subtitle;
   final String imageURL;
@@ -26,12 +27,14 @@ class Mention {
       {required this.imageURL,
       required this.subtitle,
       required this.title,
+      this.id,
       this.parameters});
 
   Mention.fromMap(Map<String, dynamic> map, {Map<String, dynamic>? params})
       : title = map['title'],
         subtitle = map['subtitle'],
         imageURL = map['imageURL'],
+        id = map['id'],
         parameters = params;
 }
 

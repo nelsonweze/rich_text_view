@@ -1,3 +1,8 @@
+## [1.1.0-dev-1]
+* BREAKING: Added SuggestionController which now takes more customizations
+* Removed dependency on Bloc package,
+* Added id param to ```Mention```
+
 ## [1.0.0]
 * Stable release
 ## [1.0.0-dev-2]

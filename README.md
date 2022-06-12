@@ -39,46 +39,49 @@ RichTextEditor is an input field that supports suggestions when  mentioning or u
 
 ```dart
 
-RichTextEditor(
-  suggestionPosition: SuggestionPosition.bottom,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                  ),
-                  mentionSuggestions: [
-                    Mention(
-                        imageURL: 'imageURL',
-                        subtitle: 'nelly',
-                        title: 'Nelly Gane'),
-                    Mention(
-                        imageURL: 'imageURL',
-                        subtitle: 'gaus',
-                        title: 'Gaus Shell')
-                  ],
-                  onSearchMention: (term) async {
-                    return List.generate(
-                        20,
-                        (index) => Mention(
+        RichTextEditor(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      ),
+                      suggestionController: SuggestionController(
+                      mentionSymbol: '/',
+                      position: SuggestionPosition.bottom,
+                      mentionSuggestions: [
+                        Mention(
                             imageURL: 'imageURL',
-                            subtitle: term.toLowerCase(),
-                            title: '$term $index'));
-                  },
-                  onMentionSelected: (suggestion) {
-                    print(suggestion.toString());
-                  },
-                  onSearchTags: (term) async {
-                    return [
-                      HashTag(
-                          hashtag: '#Dart',
-                          subtitle: '30 posts',
-                          trending: true),
-                      HashTag(
-                        hashtag: '#Flutter',
-                        subtitle: '56 posts',
-                      )
-                    ];
-                  },
-                )
+                            subtitle: 'nelly',
+                            title: 'Nelly Gane'),
+                        Mention(
+                            imageURL: 'imageURL',
+                            subtitle: 'gaus',
+                            title: 'Gaus Shell')
+                      ],
+                      onSearchMention: (term) async {
+                        return List.generate(
+                            20,
+                            (index) => Mention(
+                                id: index.toString(),
+                                imageURL: 'imageURL',
+                                subtitle: term.toLowerCase(),
+                                title: '$term $index'));
+                      },
+                      onMentionSelected: (suggestion) {
+                        print(suggestion.id);
+                      },
+                      onSearchTags: (term) async {
+                        return [
+                          HashTag(
+                              hashtag: '#Dart',
+                              subtitle: '30 posts',
+                              trending: true),
+                          HashTag(
+                            hashtag: '#Flutter',
+                            subtitle: '56 posts',
+                          )
+                        ];
+                      },
+                    ))
 ```
 
 ### Todo
