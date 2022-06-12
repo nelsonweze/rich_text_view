@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_text_view/rich_text_view.dart';
 
 /// Creates a [TextFormField] that shows suggestions mentioning and hashtags.
@@ -27,36 +26,16 @@ class RichTextEditor extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextAlignVertical? textAlignVertical;
 
-  /// Which position to append the suggested list. defaults to [SuggestionPosition.bottom].
-  final SuggestionPosition? suggestionPosition;
+  ///A controller for the suggestion behaviour and customisations.
+  /// You can as well extend this controller for a more custom behaviour.
+  final SuggestionController? suggestionController;
 
-  final Future<List<HashTag>> Function(String)? onSearchTags;
-  final Future<List<Mention>> Function(String)? onSearchMention;
-
-  /// Initial suggested hashtags when the user enters `#`
-  final List<HashTag>? hashtagSuggestions;
-
-  /// Initial suggested mentions when the user enters `@`
-  final List<Mention>? mentionSuggestions;
-
-  /// height of the suggestion item
-  final double itemHeight;
-
-  /// Callback for when a suggestion is selected during search
-  final Function(Mention)? onMentionSelected;
-
-  /// Callback for when a hashtag is selected during search
-  final Function(HashTag)? onHashTagSelected;
-
-  /// Custom mention widget shown during search
-  final Widget Function(Mention)? mentionSearchCard;
-
-  /// Custom hashtag widget shown during search
-  final Widget Function(HashTag)? hashTagSearchCard;
   final void Function()? onEditingComplete;
   final void Function(String)? onFieldSubmitted;
   final void Function(String?)? onSaved;
   final String? Function(String?)? validator;
+
+  final TextInputAction? textInputAction;
 
   const RichTextEditor(
       {Key? key,
@@ -73,16 +52,8 @@ class RichTextEditor extends StatefulWidget {
       this.keyboardType,
       this.focusNode,
       this.readOnly = false,
-      this.suggestionPosition = SuggestionPosition.bottom,
-      this.onSearchTags,
-      this.onSearchMention,
-      this.itemHeight = 80,
-      this.hashtagSuggestions = const [],
-      this.mentionSuggestions = const [],
-      this.onHashTagSelected,
-      this.onMentionSelected,
-      this.hashTagSearchCard,
-      this.mentionSearchCard,
+      this.suggestionController,
+      this.textInputAction,
       this.textDirection,
       this.onEditingComplete,
       this.inputFormatters,
@@ -98,75 +69,74 @@ class RichTextEditor extends StatefulWidget {
 
 class _RichTextEditorState extends State<RichTextEditor> {
   late TextEditingController controller;
-  late SuggestionCubit cubit;
+  late SuggestionController suggestionController;
 
   @override
   void initState() {
     super.initState();
     controller = widget.controller ??
         TextEditingController(text: widget.initialValue ?? '');
-    cubit = SuggestionCubit(widget.itemHeight);
+    suggestionController =
+        (widget.suggestionController ?? SuggestionController())
+          ..addListener(() {
+            setState(() {});
+          });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    suggestionController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
       var searchItemWidget = SearchItemWidget(
-        cubit: cubit,
-        controller: controller,
-        onTap: (contrl) {
-          setState(() {
-            controller = contrl;
+          suggestionController: suggestionController,
+          controller: controller,
+          onTap: (contrl) {
+            setState(() {
+              controller = contrl;
+            });
           });
-        },
-        onHashTagSelected: widget.onHashTagSelected,
-        onMentionSelected: widget.onMentionSelected,
-        mentionSearchCard: widget.mentionSearchCard,
-        hashTagSearchCard: widget.hashTagSearchCard,
-      );
       return Padding(
         padding: const EdgeInsets.only(top: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (widget.suggestionPosition == SuggestionPosition.top)
+            if (suggestionController.position == SuggestionPosition.top)
               searchItemWidget,
-            BlocBuilder<SuggestionCubit, SuggestionState>(
-                bloc: cubit,
-                builder: (context, provider) {
-                  return TextFormField(
-                    style: widget.style,
-                    focusNode: widget.focusNode,
-                    controller: controller,
-                    textCapitalization: TextCapitalization.sentences,
-                    readOnly: widget.readOnly,
-                    textDirection: widget.textDirection,
-                    onChanged: (val) async {
-                      widget.onChanged?.call(val);
-                      cubit.onChanged(
-                          val.split(' ').last.toLowerCase(),
-                          widget.hashtagSuggestions,
-                          widget.mentionSuggestions,
-                          widget.onSearchTags,
-                          widget.onSearchMention);
-                    },
-                    maxLines: widget.maxLines,
-                    keyboardType: widget.keyboardType,
-                    maxLength: widget.maxLength,
-                    minLines: widget.minLines,
-                    autofocus: widget.autoFocus,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    decoration: widget.decoration,
-                    textAlign: widget.textAlign,
-                    onFieldSubmitted: widget.onFieldSubmitted,
-                    inputFormatters: widget.inputFormatters,
-                    textAlignVertical: widget.textAlignVertical,
-                    onEditingComplete: widget.onEditingComplete,
-                    validator: widget.validator,
-                    onSaved: widget.onSaved,
-                  );
-                }),
-            if (widget.suggestionPosition == SuggestionPosition.bottom)
+            TextFormField(
+              style: widget.style,
+              focusNode: widget.focusNode,
+              controller: controller,
+              textCapitalization: TextCapitalization.sentences,
+              readOnly: widget.readOnly,
+              textDirection: widget.textDirection,
+              textInputAction: widget.textInputAction,
+              onChanged: (val) async {
+                widget.onChanged?.call(val);
+                suggestionController
+                    .onChanged(val.split(' ').last.toLowerCase());
+              },
+              maxLines: widget.maxLines,
+              keyboardType: widget.keyboardType,
+              maxLength: widget.maxLength,
+              minLines: widget.minLines,
+              autofocus: widget.autoFocus,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              decoration: widget.decoration,
+              textAlign: widget.textAlign,
+              onFieldSubmitted: widget.onFieldSubmitted,
+              inputFormatters: widget.inputFormatters,
+              textAlignVertical: widget.textAlignVertical,
+              onEditingComplete: widget.onEditingComplete,
+              validator: widget.validator,
+              onSaved: widget.onSaved,
+            ),
+            if (suggestionController.position == SuggestionPosition.bottom)
               searchItemWidget,
           ],
         ),
