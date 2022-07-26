@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
                   onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
                   onMentionClicked: (mention) => print('$mention clicked'),
                   onUrlClicked: (url) => print('visting $url?'),
+                  onPhoneClicked: (phone) => print('click phone $phone'),
                   truncate: true,
                   viewLessText: 'less',
                   linkStyle: TextStyle(color: Colors.blue),
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
                     ParsedType.HASH,
                     ParsedType.MENTION,
                     ParsedType.URL,
-                    ParsedType.BOLD
+                    ParsedType.BOLD,
+                    ParsedType.PHONE,
                   ],
                 ),
               ),

@@ -43,6 +43,7 @@ class RichTextView extends StatefulWidget {
   final void Function(String)? onEmailClicked;
   final void Function(String)? onUrlClicked;
   final void Function(String)? onBoldClicked;
+  final void Function(String)? onPhoneClicked;
   final bool toggleTruncate;
 
   RichTextView({
@@ -71,6 +72,7 @@ class RichTextView extends StatefulWidget {
     this.onHashTagClicked,
     this.onMentionClicked,
     this.onEmailClicked,
+    this.onPhoneClicked,
     this.onUrlClicked,
     this.onBoldClicked,
   }) : super(key: key);
@@ -101,6 +103,11 @@ class _RichTextViewState extends State<RichTextView> {
         type: ParsedType.HASH,
         style: linkStyle,
         onTap: widget.onHashTagClicked,
+      ),
+      MatchText(
+        type: ParsedType.PHONE,
+        style: linkStyle,
+        onTap: widget.onPhoneClicked,
       ),
       MatchText(
         type: ParsedType.BOLD,
