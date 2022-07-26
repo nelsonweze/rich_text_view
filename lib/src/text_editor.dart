@@ -25,6 +25,7 @@ class RichTextEditor extends StatefulWidget {
   final TextDirection? textDirection;
   final List<TextInputFormatter>? inputFormatters;
   final TextAlignVertical? textAlignVertical;
+  final EdgeInsetsGeometry padding;
 
   ///A controller for the suggestion behaviour and customisations.
   /// You can as well extend this controller for a more custom behaviour.
@@ -60,7 +61,8 @@ class RichTextEditor extends StatefulWidget {
       this.textAlignVertical,
       this.onFieldSubmitted,
       this.onSaved,
-      this.validator})
+      this.validator,
+      this.padding = const EdgeInsets.only(top: 16.0)})
       : super(key: key);
 
   @override
@@ -102,7 +104,7 @@ class _RichTextEditorState extends State<RichTextEditor> {
             });
           });
       return Padding(
-        padding: const EdgeInsets.only(top: 16.0),
+        padding: widget.padding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

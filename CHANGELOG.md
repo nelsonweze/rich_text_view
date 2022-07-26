@@ -1,3 +1,7 @@
+## [1.1.0]
+* stable release
+* minor fixes
+
 ## [1.1.0-dev-1]
 * BREAKING: Added SuggestionController which now takes more customizations
 * Removed dependency on Bloc package,
