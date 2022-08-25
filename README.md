@@ -17,20 +17,22 @@ A simple yet powerful rich text view that supports mention, hashtag, email, url 
                       to send a *bold* email to janedoe@gmail.com and verify the
                        facts talkmore of visiting www.janedoe.com''',
                   maxLines: 3,
-                  onEmailClicked: (email) => print('$email clicked'),
-                  onHashTagClicked: (hashtag) => print('is $hashtag trending?'),
-                  onMentionClicked: (mention) => print('$mention clicked'),
-                  onUrlClicked: (url) => print('visting $url?'),
                   truncate: true,
                   viewLessText: 'less',
                   linkStyle: TextStyle(color: Colors.blue),
                   supportedTypes: [
-                    ParsedType.EMAIL,
-                    ParsedType.HASH,
-                    ParsedType.MENTION,
-                    ParsedType.URL,
-                    ParsedType.BOLD
-                  ],
+                    EmailParser(
+                        onTap: (email) => print('${email.value} clicked')),
+                    PhoneParser(
+                        onTap: (phone) => print('click phone ${phone.value}')),
+                    MentionParser(
+                        onTap: (mention) => print('${mention.value} clicked')),
+                    UrlParser(onTap: (url) => print('visting ${url.value}?')),
+                    BoldParser(),
+                    HashTagParser(
+                        onTap: (hashtag) =>
+                            print('is ${hashtag.value} trending?'))
+                  ]
                 )
 ```
 ### RichTextEditor 

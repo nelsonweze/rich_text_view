@@ -10,7 +10,6 @@ class RTUtils {
   static const phonePattern =
       r'(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})';
 
-  static const String starPattern = r'\*.*?\*';
   static const boldPattern = r'\*.*?\*';
   static const hashPattern = r'\B#+([^\x00-\x7F]|\w)+';
   static const mentionPattern = r'\B@+([\w]+)\b';

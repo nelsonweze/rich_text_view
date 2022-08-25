@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'models.dart';
-import 'util.dart';
 
 /// Creates a [RichText] widget that supports emails, mentions, hashtags and more.
 ///
@@ -16,7 +15,6 @@ class RichTextView extends StatefulWidget {
   final String text;
   final TextStyle? style;
   final TextStyle linkStyle;
-  final TextStyle? boldStyle;
   final TextDirection? textDirection;
   final bool softWrap;
   final TextOverflow overflow;
@@ -34,16 +32,10 @@ class RichTextView extends StatefulWidget {
 
   /// if included, will show a view less text
   final String? viewLessText;
-  final List<ParsedType> supportedTypes;
+  final List<ParserType> supportedTypes;
   final RegexOptions regexOptions;
   final TextAlign textAlign;
 
-  final void Function(String)? onHashTagClicked;
-  final void Function(String)? onMentionClicked;
-  final void Function(String)? onEmailClicked;
-  final void Function(String)? onUrlClicked;
-  final void Function(String)? onBoldClicked;
-  final void Function(String)? onPhoneClicked;
   final bool toggleTruncate;
 
   RichTextView({
@@ -68,13 +60,6 @@ class RichTextView extends StatefulWidget {
     this.viewMoreText = 'more',
     this.viewLessText,
     this.selectable = false,
-    this.boldStyle,
-    this.onHashTagClicked,
-    this.onMentionClicked,
-    this.onEmailClicked,
-    this.onPhoneClicked,
-    this.onUrlClicked,
-    this.onBoldClicked,
   }) : super(key: key);
 
   @override
@@ -85,11 +70,6 @@ class _RichTextViewState extends State<RichTextView> {
   late bool _expanded;
   late int? _maxLines;
   late TextStyle linkStyle;
-  late List<MatchText> parse;
-
-  Map<String, String?> formatBold({String? pattern, String? str}) {
-    return {'display': str?.substring(1, str.length - 1)};
-  }
 
   @override
   void initState() {
@@ -98,40 +78,6 @@ class _RichTextViewState extends State<RichTextView> {
     _maxLines = widget.truncate ? (widget.maxLines ?? 2) : widget.maxLines;
 
     linkStyle = widget.linkStyle;
-    parse = [
-      MatchText(
-        type: ParsedType.HASH,
-        style: linkStyle,
-        onTap: widget.onHashTagClicked,
-      ),
-      MatchText(
-        type: ParsedType.PHONE,
-        style: linkStyle,
-        onTap: widget.onPhoneClicked,
-      ),
-      MatchText(
-        type: ParsedType.BOLD,
-        renderText: formatBold,
-        onTap: (txt) {
-          widget.onBoldClicked?.call(txt.substring(1, txt.length - 1));
-        },
-      ),
-      MatchText(
-        type: ParsedType.MENTION,
-        style: linkStyle,
-        onTap: widget.onMentionClicked,
-      ),
-      MatchText(
-        type: ParsedType.EMAIL,
-        style: linkStyle,
-        onTap: widget.onEmailClicked,
-      ),
-      MatchText(
-        type: ParsedType.URL,
-        style: linkStyle,
-        onTap: widget.onUrlClicked,
-      ),
-    ];
   }
 
   @override
@@ -157,31 +103,11 @@ class _RichTextViewState extends State<RichTextView> {
     List<InlineSpan> parseText(String txt) {
       var newString = txt;
 
-      var _mapping = <String, MatchText>{};
+      var _mapping = <String, ParserType>{};
 
-      parse.forEach((e) {
-        if (e.type == ParsedType.EMAIL &&
-            widget.supportedTypes.contains(ParsedType.EMAIL)) {
-          _mapping[RTUtils.emailPattern] = e;
-        } else if (e.type == ParsedType.PHONE &&
-            widget.supportedTypes.contains(ParsedType.PHONE)) {
-          _mapping[RTUtils.phonePattern] = e;
-        } else if (e.type == ParsedType.URL &&
-            widget.supportedTypes.contains(ParsedType.URL)) {
-          _mapping[RTUtils.urlPattern] = e;
-        } else if (e.type == ParsedType.BOLD &&
-            widget.supportedTypes.contains(ParsedType.BOLD)) {
-          _mapping[RTUtils.boldPattern] = e
-            ..style = widget.boldStyle ??
-                _style?.copyWith(fontWeight: FontWeight.bold);
-        } else if (e.type == ParsedType.MENTION &&
-            widget.supportedTypes.contains(ParsedType.MENTION)) {
-          _mapping[RTUtils.mentionPattern] = e;
-        } else if (e.type == ParsedType.HASH &&
-            widget.supportedTypes.contains(ParsedType.HASH)) {
-          _mapping[RTUtils.hashPattern] = e;
-        }
-      });
+      for (var type in widget.supportedTypes) {
+        _mapping[type.pattern!] = type;
+      }
 
       final pattern = '(${_mapping.keys.toList().join('|')})';
 
@@ -216,21 +142,32 @@ class _RichTextViewState extends State<RichTextView> {
 
           if (mapping != null) {
             if (mapping.renderText != null) {
-              var result = Map<String, String>.from(
-                  mapping.renderText!(str: matchText, pattern: pattern));
+              var result = mapping.renderText!(str: matchText);
+
+              result.start = match.start;
+              result.end = match.end;
 
               span = TextSpan(
-                text: "${result['display']}",
+                text: '${result.display}',
                 style: mapping.style ?? linkStyle,
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () => mapping.onTap!(matchText),
+                recognizer: mapping.onTap == null
+                    ? null
+                    : (TapGestureRecognizer()
+                      ..onTap = () => mapping.onTap!(result)),
               );
             } else {
+              var matched = Matched(
+                  display: matchText,
+                  value: matchText,
+                  start: match.start,
+                  end: match.end);
               span = TextSpan(
                 text: '$matchText',
                 style: mapping.style ?? linkStyle,
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () => mapping.onTap!(matchText),
+                recognizer: mapping.onTap == null
+                    ? null
+                    : (TapGestureRecognizer()
+                      ..onTap = () => mapping.onTap!(matched)),
               );
             }
           } else {
