@@ -13,5 +13,5 @@ class RTUtils {
   static const String starPattern = r'\*.*?\*';
   static const boldPattern = r'\*.*?\*';
   static const hashPattern = r'\B#+([^\x00-\x7F]|\w)+';
-  static const mentionPattern = r'\B@+([\w]+)\b';
+  static const mentionPattern = r'\B@+([\w+.]+)\b';
 }

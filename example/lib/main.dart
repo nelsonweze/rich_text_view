@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
                 child: RichTextView(
                   text:
                       '''Who else thinks it's thinks it's just cool to mention 
-                      @jane when #JaneMustLive is trending without even trying 
+                      @jane.id_ when #JaneMustLive is trending without even trying 
                       to send a *bold* email to janedoe@gmail.com and verify the
                        facts talkmore of visiting www.janedoe.com''',
                   maxLines: 3,
