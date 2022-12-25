@@ -15,11 +15,7 @@ class SearchItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var state = suggestionController.state;
-    var border = BorderSide(
-        width: Theme.of(context).brightness == Brightness.dark ? 0.1 : 1.0,
-        color: state.suggestionHeight > 1
-            ? Colors.grey[200]!
-            : Colors.transparent);
+    var border = BorderSide.none;
     return Container(
         constraints: BoxConstraints(
           minHeight: 0,
