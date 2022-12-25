@@ -22,7 +22,7 @@ class SearchItemWidget extends StatelessWidget {
             : Colors.transparent);
     return Container(
         constraints: BoxConstraints(
-          minHeight: 1,
+          minHeight: 0,
           maxHeight: state.suggestionHeight,
           maxWidth: double.infinity,
           minWidth: double.infinity,
