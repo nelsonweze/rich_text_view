@@ -1,3 +1,10 @@
+## [1.2.0-dev-1]
+* BREAKING: Removed ```ParsedType```, renamed ```MatchText``` to ```ParserType```
+* ```RichTextView.supportedTypes``` now takes list of ```ParserType``` eg ```MentionParser```, ```HashTagParser```, ```UrlParser``` and so on. You can extend ```ParserType``` for a custom parser
+* All onTap callbacks in ```RichTextView``` have been moved to thier individual parser class
+* ```ParserType.onTap``` returns ```Matched``` which also contains the start and end indexes
+* Check example codes for more
+
 ## [1.1.0]
 * stable release
 * minor fixes

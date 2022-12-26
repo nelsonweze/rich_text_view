@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'util.dart';
+
 enum SuggestionPosition { top, bottom, none }
 
 class HashTag {
@@ -38,8 +41,6 @@ class Mention {
         parameters = params;
 }
 
-enum ParsedType { EMAIL, PHONE, URL, HASH, MENTION, BOLD, CUSTOM }
-
 class RegexOptions {
   /// Creates a RegexOptions object
   /// If `multiLine` is enabled, then `^` and `$` will match the beginning and
@@ -66,42 +67,98 @@ class RegexOptions {
   final bool dotAll;
 }
 
-/// A MatchText class which provides a structure for [ParsedText] to handle
-/// Pattern matching and also to provide custom [Function] and custom [TextStyle].
-class MatchText {
-  /// Used to enforce Predefined regex to match from
-  ParsedType type;
+class Matched {
+  String? display;
+  String? value;
+  int? start;
+  int? end;
+  Matched({required this.display, this.value, this.start, this.end});
 
+  @override
+  String toString() =>
+      'display: $display value: $value start: $start end: $end';
+}
+
+
+
+abstract class ParserType {
   /// If no [type] property is explicitly defined then this propery must be
   /// non null takes a [regex] string
   String? pattern;
 
   /// Takes a custom style of [TextStyle] for the matched text widget
-  var style;
+  TextStyle? style;
 
   /// A custom [Function] to handle onTap.
-  void Function(String)? onTap;
+  void Function(Matched)? onTap;
 
-  /// A callback function that takes two parameter String & pattern
-  ///
-  /// @param str - is the word that is being matched
-  /// @param pattern - pattern passed to the MatchText class
-  ///
-  /// eg: Your str is 'Mention [@michel:5455345]' where 5455345 is ID of this user
-  /// and @michel the value to display on interface.
-  /// Your pattern for ID & username extraction : `/\[(@[^:]+):([^\]]+)\]/`i
-  /// Displayed text will be : Mention `@michel`
-  Function({String? str, String? pattern})? renderText;
+  /// This lets you customise how you want the
+  /// matched text to be displayed
+  Matched Function({String? str})? renderText;
 
-  final RegexOptions regexOptions;
-
-  /// Creates a MatchText object
-  MatchText({
-    this.type = ParsedType.CUSTOM,
+  /// Creates a ParserType object
+  ParserType({
     this.pattern,
     this.style,
     this.onTap,
     this.renderText,
-    this.regexOptions = const RegexOptions(),
   });
+}
+
+class MentionParser extends ParserType {
+  MentionParser(
+      {String? pattern = RTUtils.mentionPattern,
+      Function(Matched)? onTap,
+      TextStyle? style,
+      bool enableID = false})
+      : super(
+          pattern: pattern,
+          onTap: onTap,
+        );
+}
+
+class HashTagParser extends ParserType {
+  HashTagParser({
+    String? pattern = RTUtils.hashPattern,
+    Function(Matched)? onTap,
+    TextStyle? style,
+  }) : super(pattern: pattern, style: style, onTap: onTap);
+}
+
+class PhoneParser extends ParserType {
+  PhoneParser({
+    String? pattern = RTUtils.phonePattern,
+    Function(Matched)? onTap,
+    TextStyle? style,
+  }) : super(pattern: pattern, style: style, onTap: onTap);
+}
+
+class EmailParser extends ParserType {
+  EmailParser({
+    String? pattern = RTUtils.emailPattern,
+    Function(Matched)? onTap,
+    TextStyle? style,
+  }) : super(pattern: pattern, style: style, onTap: onTap);
+}
+
+class UrlParser extends ParserType {
+  UrlParser({
+    String? pattern = RTUtils.urlPattern,
+    Function(Matched)? onTap,
+    TextStyle? style,
+  }) : super(pattern: pattern, style: style, onTap: onTap);
+}
+
+class BoldParser extends ParserType {
+  BoldParser(
+      {Function(Matched)? onTap,
+      TextStyle? style,
+      String pattern = RTUtils.boldPattern})
+      : super(style: style, onTap: onTap, pattern: pattern) {
+    renderText = ({String? str}) {
+      return Matched(
+          display: str?.substring(1, str.length - 1),
+          value: str?.substring(1, str.length - 1));
+    };
+  }
 }
