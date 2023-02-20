@@ -77,17 +77,28 @@ class _RichTextEditorState extends State<RichTextEditor> {
   void initState() {
     super.initState();
     controller = widget.controller ??
-        TextEditingController(text: widget.initialValue ?? '');
+        TextEditingController(text: widget.initialValue ?? '')
+      ..addListener(() {
+        if (mounted) {
+          var cursorPos = controller.selection.base.offset;
+          var val = controller.text.substring(0, cursorPos);
+          suggestionController.onChanged(val.split(' ').last.toLowerCase());
+        }
+      });
     suggestionController =
         (widget.suggestionController ?? SuggestionController())
           ..addListener(() {
-            setState(() {});
+            if (mounted) {
+              setState(() {});
+            }
           });
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    if (widget.controller == null) {
+      controller.dispose();
+    }
     suggestionController.dispose();
     super.dispose();
   }
@@ -118,11 +129,7 @@ class _RichTextEditorState extends State<RichTextEditor> {
               readOnly: widget.readOnly,
               textDirection: widget.textDirection,
               textInputAction: widget.textInputAction,
-              onChanged: (val) async {
-                widget.onChanged?.call(val);
-                suggestionController
-                    .onChanged(val.split(' ').last.toLowerCase());
-              },
+              onChanged: widget.onChanged,
               maxLines: widget.maxLines,
               keyboardType: widget.keyboardType,
               maxLength: widget.maxLength,
