@@ -82,7 +82,7 @@ class _RichTextViewState extends State<RichTextView> {
 
   @override
   Widget build(BuildContext context) {
-    var _style = widget.style ?? Theme.of(context).textTheme.bodyText2;
+    var _style = widget.style ?? Theme.of(context).textTheme.bodyMedium;
     var link = _expanded && widget.viewLessText == null
         ? TextSpan()
         : TextSpan(
