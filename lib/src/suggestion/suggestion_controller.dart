@@ -28,11 +28,13 @@ class SuggestionController extends ChangeNotifier {
   /// Which position to append the suggested list. defaults to [SuggestionPosition.bottom].
   final SuggestionPosition? position;
 
-    /// Custom mention widget shown during search
+  /// Custom mention widget shown during search
   final Widget Function(Mention)? mentionSearchCard;
 
   /// Custom hashtag widget shown during search
   final Widget Function(HashTag)? hashTagSearchCard;
+
+  final Color? borderColor;
 
   SuggestionController(
       {this.itemHeight = 100,
@@ -49,7 +51,8 @@ class SuggestionController extends ChangeNotifier {
       this.onMentionSelected,
       this.position = SuggestionPosition.bottom,
       this.hashTagSearchCard,
-      this.mentionSearchCard});
+      this.mentionSearchCard,
+      this.borderColor});
 
   var state = SuggestionState();
 
@@ -107,13 +110,24 @@ class SuggestionController extends ChangeNotifier {
 
   TextEditingController onuserselect(
       String item, TextEditingController controller) {
-    var splits = controller.text.split(' ');
-    splits.last = item;
-    controller.value = TextEditingValue(
-        text: splits.join(' '),
-        selection: TextSelection.collapsed(offset: splits.join(' ').length));
+    var cursorPos = controller.selection.base.offset;
 
-    suggestionHeight = 1;
+    // Right text of cursor position
+    var suffixText = controller.text.substring(cursorPos);
+
+    // Left text of cursor
+    var prefixText = controller.text.substring(0, cursorPos);
+    var splits = prefixText.split(' ');
+
+    // Add the selected item
+    splits.last = item;
+    prefixText = splits.join(' ');
+
+    controller.value = TextEditingValue(
+        text: prefixText + suffixText,
+        selection: TextSelection.collapsed(offset: prefixText.length));
+
+    suggestionHeight = 0;
     hashtags = [];
     suggestions = [];
     return controller;
@@ -126,9 +140,9 @@ class SuggestionController extends ChangeNotifier {
     suggestionHeight = load
         ? containerMaxHeight
         : people != null
-            ? (itemHeight * people.length).clamp(1.0, containerMaxHeight)
+            ? (itemHeight * people.length).clamp(0, containerMaxHeight)
             : hash != null
-                ? (itemHeight * hash.length).clamp(1.0, containerMaxHeight)
+                ? (itemHeight * hash.length).clamp(0, containerMaxHeight)
                 : 1.0;
   }
 }

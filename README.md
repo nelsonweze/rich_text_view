@@ -12,7 +12,7 @@ A simple yet powerful rich text view that supports mention, hashtag, email, url 
 ```dart
  RichTextView(
            text:
-                      '''Who else thinks it's thinks it's just cool to mention 
+                      '''Who else thinks it's thinks it's just cool😎 to mention 
                       @jane when #JaneMustLive is trending without even trying 
                       to send a *bold* email to janedoe@gmail.com and verify the
                        facts talkmore of visiting www.janedoe.com''',

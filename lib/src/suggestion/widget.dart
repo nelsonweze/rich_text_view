@@ -17,12 +17,12 @@ class SearchItemWidget extends StatelessWidget {
     var state = suggestionController.state;
     var border = BorderSide(
         width: Theme.of(context).brightness == Brightness.dark ? 0.1 : 1.0,
-        color: state.suggestionHeight > 1
-            ? Colors.grey[200]!
+        color: state.suggestionHeight > 0
+            ? (suggestionController.borderColor ?? Colors.grey[200])!
             : Colors.transparent);
     return Container(
         constraints: BoxConstraints(
-          minHeight: 1,
+          minHeight: 0,
           maxHeight: state.suggestionHeight,
           maxWidth: double.infinity,
           minWidth: double.infinity,
@@ -96,7 +96,7 @@ class SearchItemWidget extends StatelessWidget {
                                           item.hashtag,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .subtitle2,
+                                              .titleSmall,
                                         ),
                                         subtitle: Text(item.subtitle ?? ''),
                                         trailing: item.trending
@@ -142,7 +142,7 @@ class ListUserItem extends StatelessWidget {
                     title.trim(),
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText1!
+                        .bodyLarge!
                         .copyWith(fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -156,7 +156,7 @@ class ListUserItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context)
                       .textTheme
-                      .caption!
+                      .bodySmall!
                       .copyWith(fontSize: 14),
                 )),
               ),

@@ -1,3 +1,7 @@
+
+##[1.2.1-dev-1]
+* Fixed (#31)[https://github.com/nelsonweze/rich_text_view/issues/31] and (#32)[https://github.com/nelsonweze/rich_text_view/issues/32]
+* Added ```borderColor``` property to ```SuggestionController```
 ## [1.2.0]
 * BREAKING: Removed ```ParsedType```, renamed ```MatchText``` to ```ParserType```
 * ```RichTextView.supportedTypes``` now takes list of ```ParserType``` eg ```MentionParser```, ```HashTagParser```, ```UrlParser``` and so on. You can extend ```ParserType``` for a custom parser
