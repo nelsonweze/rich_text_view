@@ -99,7 +99,10 @@ class _RichTextEditorState extends State<RichTextEditor> {
     if (widget.controller == null) {
       controller.dispose();
     }
-    suggestionController.dispose();
+    if (widget.suggestionController == null) {
+      suggestionController.dispose();
+    }
+
     super.dispose();
   }
 
