@@ -32,6 +32,10 @@ class RichTextView extends StatefulWidget {
 
   /// if included, will show a view less text
   final String? viewLessText;
+
+  /// the view more and view less text's style
+  final TextStyle? viewMoreLessStyle;
+
   final List<ParserType> supportedTypes;
   final RegexOptions regexOptions;
   final TextAlign textAlign;
@@ -59,6 +63,7 @@ class RichTextView extends StatefulWidget {
     this.onMore,
     this.viewMoreText = 'more',
     this.viewLessText,
+    this.viewMoreLessStyle,
     this.selectable = false,
   }) : super(key: key);
 
@@ -90,6 +95,7 @@ class _RichTextViewState extends State<RichTextView> {
               TextSpan(text: ' \u2026'),
               TextSpan(
                   text: _expanded ? widget.viewLessText : widget.viewMoreText,
+                  style: widget.viewMoreLessStyle,
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       setState(() {

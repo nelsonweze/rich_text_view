@@ -79,8 +79,6 @@ class Matched {
       'display: $display value: $value start: $start end: $end';
 }
 
-
-
 abstract class ParserType {
   /// If no [type] property is explicitly defined then this propery must be
   /// non null takes a [regex] string
@@ -111,10 +109,7 @@ class MentionParser extends ParserType {
       Function(Matched)? onTap,
       TextStyle? style,
       bool enableID = false})
-      : super(
-          pattern: pattern,
-          onTap: onTap,
-        );
+      : super(pattern: pattern, onTap: onTap, style: style);
 }
 
 class HashTagParser extends ParserType {
