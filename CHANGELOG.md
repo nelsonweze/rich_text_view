@@ -1,3 +1,6 @@
+##[1.2.1-dev-2]
+* Updated ```RTUtils.emailPattern``` to use RFC 5322 Standard Email Regex 
+*  disposed ```suggestionController``` correctly
 
 ##[1.2.1-dev-1]
 * Fixed (#31)[https://github.com/nelsonweze/rich_text_view/issues/31] and (#32)[https://github.com/nelsonweze/rich_text_view/issues/32]
