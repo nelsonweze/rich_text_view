@@ -5,7 +5,7 @@ class RTUtils {
 
   /// URL Regex - A predefined type for handling URL matching
   static const urlPattern =
-      r'[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:_\+.~#?&//=]*)';
+      r'''[(http(s)?):\/\/(www\.)?a-zA-Z0-9!@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9!@:%_\+.~#?&//=]*)''';
 
   /// Phone Regex - A predefined type for handling phone matching
   static const phonePattern =
