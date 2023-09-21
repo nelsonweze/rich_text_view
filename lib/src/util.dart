@@ -9,7 +9,7 @@ class RTUtils {
 
   /// Phone Regex - A predefined type for handling phone matching
   static const phonePattern =
-      r'''((\+|00(\s|\s?\-\s?)?)31(\s|\s?\-\s?)?(\(0\)[\-\s]?)?|0)[1-9]((\s|\s?\-\s?)?[0-9])((\s|\s?-\s?)?[0-9])((\s|\s?-\s?)?[0-9])\s?[0-9]\s?[0-9]\s?[0-9]\s?[0-9]\s?[0-9]''';
+      r'(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})';
 
   static const boldPattern = r'\*.*?\*';
   static const italicPattern = r'\_.*?\_';
