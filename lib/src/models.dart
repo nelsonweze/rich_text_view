@@ -162,3 +162,17 @@ class BoldParser extends ParserType {
     };
   }
 }
+
+class ItalicParser extends ParserType {
+  ItalicParser(
+      {Function(Matched)? onTap,
+      TextStyle? style,
+      String pattern = RTUtils.italicPattern})
+      : super(style: style, onTap: onTap, pattern: pattern) {
+    renderText = ({String? str}) {
+      return Matched(
+          display: str?.substring(1, str.length - 1),
+          value: str?.substring(1, str.length - 1));
+    };
+  }
+}
