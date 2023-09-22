@@ -1,4 +1,4 @@
-##[1.2.2]
+##[1.3.0]
 
 - Updated `RTUtils.emailPattern` and `RTUtils.urlPattern` to use RFC 5322 Standard Regex
 - disposed `suggestionController` correctly
