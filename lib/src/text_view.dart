@@ -30,6 +30,9 @@ class RichTextView extends StatefulWidget {
   /// the view more text if `truncate` is true
   final String viewMoreText;
 
+  /// the view more and view less text's style
+  final TextStyle? viewMoreLessStyle;
+
   /// if included, will show a view less text
   final String? viewLessText;
   final List<ParserType> supportedTypes;
@@ -59,6 +62,7 @@ class RichTextView extends StatefulWidget {
     this.onMore,
     this.viewMoreText = 'more',
     this.viewLessText,
+    this.viewMoreLessStyle,
     this.selectable = false,
   }) : super(key: key);
 
@@ -76,7 +80,6 @@ class _RichTextViewState extends State<RichTextView> {
     super.initState();
     _expanded = !widget.truncate;
     _maxLines = widget.truncate ? (widget.maxLines ?? 2) : widget.maxLines;
-
     linkStyle = widget.linkStyle;
   }
 
@@ -97,7 +100,7 @@ class _RichTextViewState extends State<RichTextView> {
                       });
                     }),
             ],
-            style: linkStyle,
+            style: widget.viewMoreLessStyle ?? linkStyle,
           );
 
     List<InlineSpan> parseText(String txt) {
